@@ -67,6 +67,14 @@ public class GameMaster: MonoBehaviour
         worldRendering();
     }
 
+    void move(int[,] world, (int y, int x) pos, (int y, int x) target) 
+    {
+        if(world[target.y, target.x] == WorldPiece.Void.code) {
+            world[playerPos.y, playerPos.x] = WorldPiece.Void.code;
+            world[target.y, target.x] = WorldPiece.Player.code;
+        }
+    }
+
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
     /// </summary>
@@ -74,38 +82,30 @@ public class GameMaster: MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.W)) 
         {
-            if (playerPos.y - 1 >= 0) {
-                if(world[playerPos.y - 1, playerPos.x] == WorldPiece.Void.code) {
-                    world[playerPos.y, playerPos.x] = WorldPiece.Void.code;
-                    world[playerPos.y - 1, playerPos.x] = WorldPiece.Player.code;
-                }
+            (int y, int x) target = (playerPos.y - 1, playerPos.x);
+            if (target.y >= 0) {
+                move(world, playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.S)) 
         {
-            if (playerPos.y + 1 < world.GetLength(0)) {
-                if(world[playerPos.y + 1, playerPos.x ] == WorldPiece.Void.code) {
-                    world[playerPos.y, playerPos.x] = WorldPiece.Void.code;
-                    world[playerPos.y + 1, playerPos.x] = WorldPiece.Player.code;
-                }
+            (int y, int x) target = (playerPos.y + 1, playerPos.x);
+            if (target.y < world.GetLength(0)) {
+                move(world, playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.D)) 
         {
-            if (playerPos.x + 1 < world.GetLength(1)) {
-                if(world[playerPos.y, playerPos.x + 1] == WorldPiece.Void.code) {
-                    world[playerPos.y, playerPos.x] = WorldPiece.Void.code;
-                    world[playerPos.y, playerPos.x + 1] = WorldPiece.Player.code;
-                }
+            (int y, int x) target = (playerPos.y, playerPos.x + 1);
+            if (target.x < world.GetLength(1)) {
+                move(world, playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.A)) 
         {
-            if (playerPos.x - 1 >= 0) {
-                if(world[playerPos.y, playerPos.x - 1] == WorldPiece.Void.code) {
-                    world[playerPos.y, playerPos.x] = WorldPiece.Void.code;
-                    world[playerPos.y, playerPos.x - 1] = WorldPiece.Player.code;
-                }
+            (int y, int x) target = (playerPos.y, playerPos.x - 1);
+            if (target.x >= 0) {
+                move(world, playerPos, target);
             }
         }   
         worldRendering();
