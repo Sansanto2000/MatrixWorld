@@ -52,7 +52,7 @@ public class GameMaster: MonoBehaviour
                 } else {
                     tile = voidTile; //Agregar manejo de excepción para este caso
                 }
-                Instantiate(tile, new Vector2(i, j), Quaternion.identity);
+                Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
             }
         }
     }
