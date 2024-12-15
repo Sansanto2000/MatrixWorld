@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PieceData
 {
@@ -50,7 +51,7 @@ public class GameMaster: MonoBehaviour
                 } else if (world[i,j] == WorldPiece.Void.code) {
                     tile = voidTile;
                 } else {
-                    tile = voidTile; //Agregar manejo de excepción para este caso
+                    throw new KeyNotFoundException($"El código de celda especificado ({world[i,j]}) no esta corresponde a ningún tipo de celda aceptado.");
                 }
                 Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
             }
