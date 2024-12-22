@@ -33,13 +33,9 @@ public class GameMaster: MonoBehaviour
             {
                 GameObject tile;
                 PieceData piece = pieceDict.getPiece(world[i,j]);
+                tile = piece.tile;
                 if(piece.name == "Player") {
-                    tile = playerTile;
                     playerPos = (i, j);
-                } else if (piece.name == "Void") {
-                    tile = voidTile;
-                } else {
-                    throw new KeyNotFoundException($"El código de celda {world[i,j]} no esta contemplado por la configuración de generación de mapa.");
                 }
                 Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
             }
@@ -51,7 +47,8 @@ public class GameMaster: MonoBehaviour
     /// </summary>
     void Awake()
     {
-        pieceDict = new PieceDict();
+        GameObject[] gameObjectsArray = new [] { voidTile, playerTile };
+        pieceDict = new PieceDict(gameObjectsArray);
     }
     
     /// <summary>
