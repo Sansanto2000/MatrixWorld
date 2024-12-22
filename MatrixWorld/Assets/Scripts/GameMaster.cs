@@ -3,7 +3,10 @@ using System.Collections.Generic;
 
 public class GameMaster: MonoBehaviour
 {
+    [Header("Configuración de celdas")]
+    [Tooltip("Celda de vacío.")]
     public GameObject voidTile;
+    [Tooltip("Celda que representa al jugador.")]
     public GameObject playerTile;
 
     private PieceDict pieceDict;
