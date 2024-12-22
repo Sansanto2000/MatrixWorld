@@ -1,28 +1,15 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class PieceData
-{
-    public int code { get; }
-    public char small { get; }
-
-    public PieceData(int code, char small)
-    {
-        this.code = code;
-        this.small = small;
-    }
-}
-
-public static class WorldPiece
-{
-    public static readonly PieceData Void = new PieceData(0, '_');
-    public static readonly PieceData Player = new PieceData(1, 'P');
-}
-
 public class GameMaster: MonoBehaviour
 {
+    [Header("Configuración de celdas")]
+    [Tooltip("Celda de vacío.")]
     public GameObject voidTile;
+    [Tooltip("Celda que representa al jugador.")]
     public GameObject playerTile;
+
+    private PieceDict pieceDict;
 
     private int[,] world = {
         {0,0,0,0,0,0,0},
@@ -45,19 +32,25 @@ public class GameMaster: MonoBehaviour
             for (int j = 0; j < world.GetLength(1); j++)
             {
                 GameObject tile;
-                if(world[i,j] == WorldPiece.Player.code) {
-                    tile = playerTile;
+                PieceData piece = pieceDict.getPiece(world[i,j]);
+                tile = piece.tile;
+                if(piece.name == "Player") {
                     playerPos = (i, j);
-                } else if (world[i,j] == WorldPiece.Void.code) {
-                    tile = voidTile;
-                } else {
-                    throw new KeyNotFoundException($"El código de celda especificado ({world[i,j]}) no esta corresponde a ningún tipo de celda aceptado.");
                 }
                 Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
             }
         }
     }
 
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    void Awake()
+    {
+        GameObject[] gameObjectsArray = new [] { voidTile, playerTile };
+        pieceDict = new PieceDict(gameObjectsArray);
+    }
+    
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
@@ -69,9 +62,9 @@ public class GameMaster: MonoBehaviour
 
     void move(int[,] world, (int y, int x) pos, (int y, int x) target) 
     {
-        if(world[target.y, target.x] == WorldPiece.Void.code) {
-            world[playerPos.y, playerPos.x] = WorldPiece.Void.code;
-            world[target.y, target.x] = WorldPiece.Player.code;
+        if(world[target.y, target.x] == PieceDict.Void.code) {
+            world[playerPos.y, playerPos.x] = PieceDict.Void.code;
+            world[target.y, target.x] = PieceDict.Player.code;
         }
     }
 
