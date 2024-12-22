@@ -27,10 +27,10 @@ public class GameMaster: MonoBehaviour
             for (int j = 0; j < world.GetLength(1); j++)
             {
                 GameObject tile;
-                if(world[i,j] == WorldPiece.Player.code) {
+                if(world[i,j] == PieceDict.Player.code) {
                     tile = playerTile;
                     playerPos = (i, j);
-                } else if (world[i,j] == WorldPiece.Void.code) {
+                } else if (world[i,j] == PieceDict.Void.code) {
                     tile = voidTile;
                 } else {
                     throw new KeyNotFoundException($"El código de celda especificado ({world[i,j]}) no esta corresponde a ningún tipo de celda aceptado.");
@@ -51,9 +51,9 @@ public class GameMaster: MonoBehaviour
 
     void move(int[,] world, (int y, int x) pos, (int y, int x) target) 
     {
-        if(world[target.y, target.x] == WorldPiece.Void.code) {
-            world[playerPos.y, playerPos.x] = WorldPiece.Void.code;
-            world[target.y, target.x] = WorldPiece.Player.code;
+        if(world[target.y, target.x] == PieceDict.Void.code) {
+            world[playerPos.y, playerPos.x] = PieceDict.Void.code;
+            world[target.y, target.x] = PieceDict.Player.code;
         }
     }
 
