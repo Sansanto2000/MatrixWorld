@@ -27,4 +27,8 @@ public class PieceDict
         this.dict.Add(0, PieceDict.Void);
         this.dict.Add(1, PieceDict.Player);
     }
+
+    public PieceData getPiece(int code){
+        return this.dict[code];
+    }
 }
