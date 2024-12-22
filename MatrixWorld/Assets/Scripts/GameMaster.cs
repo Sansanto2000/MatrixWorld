@@ -6,6 +6,8 @@ public class GameMaster: MonoBehaviour
     public GameObject voidTile;
     public GameObject playerTile;
 
+    private PieceDict pieceDict;
+
     private int[,] world = {
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
@@ -27,19 +29,28 @@ public class GameMaster: MonoBehaviour
             for (int j = 0; j < world.GetLength(1); j++)
             {
                 GameObject tile;
-                if(world[i,j] == PieceDict.Player.code) {
+                PieceData piece = pieceDict.getPiece(world[i,j]);
+                if(piece.name == "Player") {
                     tile = playerTile;
                     playerPos = (i, j);
-                } else if (world[i,j] == PieceDict.Void.code) {
+                } else if (piece.name == "Void") {
                     tile = voidTile;
                 } else {
-                    throw new KeyNotFoundException($"El código de celda especificado ({world[i,j]}) no esta corresponde a ningún tipo de celda aceptado.");
+                    throw new KeyNotFoundException($"El código de celda {world[i,j]} no esta contemplado por la configuración de generación de mapa.");
                 }
                 Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
             }
         }
     }
 
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    void Awake()
+    {
+        pieceDict = new PieceDict();
+    }
+    
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
