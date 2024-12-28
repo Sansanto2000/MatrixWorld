@@ -94,7 +94,7 @@ public class GameMaster: MonoBehaviour
         entityRendering();
     }
 
-    void move(int[,] world, (int y, int x) pos, (int y, int x) target) 
+    (int y, int x) move(int[,] world, (int y, int x) pos, (int y, int x) target)
     {
         if(world[target.y, target.x] == PieceDict.Void.code) {
             // Movimiento
@@ -104,9 +104,12 @@ public class GameMaster: MonoBehaviour
             entityLayer[target.y, target.x] = PieceDict.Player.code;
             entityInstances[playerPos.y, playerPos.x] = null;
             entityLayer[playerPos.y, playerPos.x] = PieceDict.Void.code;
-            // Globales
-            playerPos = target;
+            
+            return target;
+        } else {
+            return pos;
         }
+        
     }
 
     /// <summary>
@@ -118,28 +121,28 @@ public class GameMaster: MonoBehaviour
         {
             (int y, int x) target = (playerPos.y - 1, playerPos.x);
             if (target.y >= 0) {
-                move(world, playerPos, target);
+                playerPos = move(world, playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.S)) 
         {
             (int y, int x) target = (playerPos.y + 1, playerPos.x);
             if (target.y < world.GetLength(0)) {
-                move(world, playerPos, target);
+                playerPos = move(world, playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.D)) 
         {
             (int y, int x) target = (playerPos.y, playerPos.x + 1);
             if (target.x < world.GetLength(1)) {
-                move(world, playerPos, target);
+                playerPos = move(world, playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.A)) 
         {
             (int y, int x) target = (playerPos.y, playerPos.x - 1);
             if (target.x >= 0) {
-                move(world, playerPos, target);
+                playerPos = move(world, playerPos, target);
             }
         }
     }
