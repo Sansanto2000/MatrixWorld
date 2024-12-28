@@ -11,7 +11,8 @@ public class GameMaster: MonoBehaviour
 
     private PieceDict pieceDict;
 
-    private int[,] world = {
+    private GameObject[,] entityInstances;
+    private int[,] entityLayer = {
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
@@ -19,6 +20,17 @@ public class GameMaster: MonoBehaviour
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
         {0,0,0,1,0,0,0},
+        {0,0,0,0,0,0,0},
+    };
+
+    private int[,] world = {
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
     };
 
@@ -34,10 +46,31 @@ public class GameMaster: MonoBehaviour
                 GameObject tile;
                 PieceData piece = pieceDict.getPiece(world[i,j]);
                 tile = piece.tile;
+                Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
+            }
+        }
+    }
+
+    private void entityRendering() 
+    {
+        int rows = entityLayer.GetLength(0);
+        int cols = entityLayer.GetLength(1);
+        entityInstances = new GameObject[rows, cols];
+        GameObject instance;
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                GameObject tile;
+                PieceData piece = pieceDict.getPiece(entityLayer[i,j]); 
+                tile = piece.tile;
                 if(piece.name == "Player") {
                     playerPos = (i, j);
+                    instance = Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
+                } else {
+                    instance = null;
                 }
-                Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
+                entityInstances[i,j] = instance;
             }
         }
     }
@@ -58,14 +91,25 @@ public class GameMaster: MonoBehaviour
     void Start()
     {
         worldRendering();
+        entityRendering();
     }
 
-    void move(int[,] world, (int y, int x) pos, (int y, int x) target) 
+    (int y, int x) move(int[,] world, (int y, int x) pos, (int y, int x) target)
     {
         if(world[target.y, target.x] == PieceDict.Void.code) {
-            world[playerPos.y, playerPos.x] = PieceDict.Void.code;
-            world[target.y, target.x] = PieceDict.Player.code;
+            // Movimiento
+            entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
+            // Referencias
+            entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
+            entityLayer[target.y, target.x] = PieceDict.Player.code;
+            entityInstances[playerPos.y, playerPos.x] = null;
+            entityLayer[playerPos.y, playerPos.x] = PieceDict.Void.code;
+            
+            return target;
+        } else {
+            return pos;
         }
+        
     }
 
     /// <summary>
@@ -77,30 +121,29 @@ public class GameMaster: MonoBehaviour
         {
             (int y, int x) target = (playerPos.y - 1, playerPos.x);
             if (target.y >= 0) {
-                move(world, playerPos, target);
+                playerPos = move(world, playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.S)) 
         {
             (int y, int x) target = (playerPos.y + 1, playerPos.x);
             if (target.y < world.GetLength(0)) {
-                move(world, playerPos, target);
+                playerPos = move(world, playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.D)) 
         {
             (int y, int x) target = (playerPos.y, playerPos.x + 1);
             if (target.x < world.GetLength(1)) {
-                move(world, playerPos, target);
+                playerPos = move(world, playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.A)) 
         {
             (int y, int x) target = (playerPos.y, playerPos.x - 1);
             if (target.x >= 0) {
-                move(world, playerPos, target);
+                playerPos = move(world, playerPos, target);
             }
-        }   
-        worldRendering();
+        }
     }
 }
