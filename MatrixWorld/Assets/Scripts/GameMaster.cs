@@ -11,7 +11,7 @@ public class GameMaster: MonoBehaviour
 
     private PieceDict pieceDict;
 
-    private int[,] world = {
+    private int[,] entityLayer = {
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
@@ -19,6 +19,17 @@ public class GameMaster: MonoBehaviour
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
         {0,0,0,1,0,0,0},
+        {0,0,0,0,0,0,0},
+    };
+
+    private int[,] world = {
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
     };
 
@@ -33,6 +44,20 @@ public class GameMaster: MonoBehaviour
             {
                 GameObject tile;
                 PieceData piece = pieceDict.getPiece(world[i,j]);
+                tile = piece.tile;
+                Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
+            }
+        }
+    }
+
+    private void entityRendering() 
+    {
+        for (int i = 0; i < entityLayer.GetLength(0); i++)
+        {
+            for (int j = 0; j < entityLayer.GetLength(1); j++)
+            {
+                GameObject tile;
+                PieceData piece = pieceDict.getPiece(entityLayer[i,j]);
                 tile = piece.tile;
                 if(piece.name == "Player") {
                     playerPos = (i, j);
@@ -58,13 +83,14 @@ public class GameMaster: MonoBehaviour
     void Start()
     {
         worldRendering();
+        entityRendering();
     }
 
     void move(int[,] world, (int y, int x) pos, (int y, int x) target) 
     {
         if(world[target.y, target.x] == PieceDict.Void.code) {
-            world[playerPos.y, playerPos.x] = PieceDict.Void.code;
-            world[target.y, target.x] = PieceDict.Player.code;
+            entityLayer[playerPos.y, playerPos.x] = PieceDict.Void.code;
+            entityLayer[target.y, target.x] = PieceDict.Player.code;
         }
     }
 
@@ -101,6 +127,6 @@ public class GameMaster: MonoBehaviour
                 move(world, playerPos, target);
             }
         }   
-        worldRendering();
+        entityRendering();
     }
 }
