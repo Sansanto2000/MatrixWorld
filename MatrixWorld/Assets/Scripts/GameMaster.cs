@@ -11,6 +11,7 @@ public class GameMaster: MonoBehaviour
 
     private PieceDict pieceDict;
 
+    private GameObject[,] entityInstances;
     private int[,] entityLayer = {
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
@@ -52,17 +53,24 @@ public class GameMaster: MonoBehaviour
 
     private void entityRendering() 
     {
-        for (int i = 0; i < entityLayer.GetLength(0); i++)
+        int rows = entityLayer.GetLength(0);
+        int cols = entityLayer.GetLength(1);
+        entityInstances = new GameObject[rows, cols];
+        GameObject instance;
+        for (int i = 0; i < rows; i++)
         {
-            for (int j = 0; j < entityLayer.GetLength(1); j++)
+            for (int j = 0; j < cols; j++)
             {
                 GameObject tile;
-                PieceData piece = pieceDict.getPiece(entityLayer[i,j]);
+                PieceData piece = pieceDict.getPiece(entityLayer[i,j]); 
                 tile = piece.tile;
                 if(piece.name == "Player") {
                     playerPos = (i, j);
-                    Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
+                    instance = Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
+                } else {
+                    instance = null;
                 }
+                entityInstances[i,j] = instance;
             }
         }
     }
@@ -89,8 +97,15 @@ public class GameMaster: MonoBehaviour
     void move(int[,] world, (int y, int x) pos, (int y, int x) target) 
     {
         if(world[target.y, target.x] == PieceDict.Void.code) {
-            entityLayer[playerPos.y, playerPos.x] = PieceDict.Void.code;
+            // Movimiento
+            entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
+            // Referencias
+            entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
             entityLayer[target.y, target.x] = PieceDict.Player.code;
+            entityInstances[playerPos.y, playerPos.x] = null;
+            entityLayer[playerPos.y, playerPos.x] = PieceDict.Void.code;
+            // Globales
+            playerPos = target;
         }
     }
 
@@ -126,7 +141,6 @@ public class GameMaster: MonoBehaviour
             if (target.x >= 0) {
                 move(world, playerPos, target);
             }
-        }   
-        entityRendering();
+        }
     }
 }
