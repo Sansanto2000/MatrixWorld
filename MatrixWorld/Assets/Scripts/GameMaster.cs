@@ -61,8 +61,8 @@ public class GameMaster: MonoBehaviour
                 tile = piece.tile;
                 if(piece.name == "Player") {
                     playerPos = (i, j);
+                    Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
                 }
-                Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
             }
         }
     }
