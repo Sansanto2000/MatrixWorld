@@ -4,12 +4,15 @@ using System.Collections.Generic;
 public class GameMaster: MonoBehaviour
 {
     [Header("Configuración de celdas")]
+
     [Tooltip("Celda de vacío.")]
     public GameObject voidTile;
-    [Tooltip("Celda de muro.")]
-    public GameObject wallTile;
+
     [Tooltip("Celda que representa al jugador.")]
     public GameObject playerTile;
+
+    [Tooltip("Celda de muro.")]
+    public GameObject wallTile;
 
     private PieceDict pieceDict;
 
@@ -82,7 +85,7 @@ public class GameMaster: MonoBehaviour
     /// </summary>
     void Awake()
     {
-        GameObject[] gameObjectsArray = new [] { voidTile, playerTile };
+        GameObject[] gameObjectsArray = new [] { voidTile, playerTile, wallTile };
         pieceDict = new PieceDict(gameObjectsArray);
     }
     
