@@ -92,6 +92,13 @@ public class GameMaster: MonoBehaviour
     {
         worldRendering();
         entityRendering();
+        updateCamera();
+    }
+
+    void updateCamera()
+    {
+        if(playerPos.x != Camera.main.transform.position.x || playerPos.y != Camera.main.transform.position.y)
+            Camera.main.transform.position = new Vector3(playerPos.x, -playerPos.y, Camera.main.transform.position.z);
     }
 
     (int y, int x) move(int[,] world, (int y, int x) pos, (int y, int x) target)
@@ -145,5 +152,6 @@ public class GameMaster: MonoBehaviour
                 playerPos = move(world, playerPos, target);
             }
         }
+        updateCamera();
     }
 }
