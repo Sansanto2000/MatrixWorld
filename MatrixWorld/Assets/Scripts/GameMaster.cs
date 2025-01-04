@@ -23,13 +23,13 @@ public class GameMaster: MonoBehaviour
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0},
         {0,0,0,1,0,0,0},
-        {0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0},
     };
 
     private int[,] world = {
-        {2,0,2,0,0,0,0},
+        {2,2,2,0,2,2,2},
         {2,0,0,0,0,0,2},
         {2,0,0,0,0,0,2},
         {2,0,0,0,0,0,0},
@@ -115,10 +115,22 @@ public class GameMaster: MonoBehaviour
             entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
             entityLayer[target.y, target.x] = PieceDict.Player.code;
             entityInstances[playerPos.y, playerPos.x] = null;
-            entityLayer[playerPos.y, playerPos.x] = PieceDict.Void.code;
+            entityLayer[playerPos.y, playerPos.x] = 0;
             
             return target;
-        } else {
+        } 
+        else if (world[target.y, target.x] == PieceDict.Wall.code && world[pos.y, pos.x] == PieceDict.Wall.code){
+            // Movimiento
+            entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
+            // Referencias
+            entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
+            entityLayer[target.y, target.x] = PieceDict.Player.code;
+            entityInstances[playerPos.y, playerPos.x] = null;
+            entityLayer[playerPos.y, playerPos.x] = 0;
+
+            return target;
+        }
+        else {
             return pos;
         }
         
