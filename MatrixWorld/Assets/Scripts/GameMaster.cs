@@ -6,6 +6,8 @@ public class GameMaster: MonoBehaviour
     [Header("Configuración de celdas")]
     [Tooltip("Celda de vacío.")]
     public GameObject voidTile;
+    [Tooltip("Celda de muro.")]
+    public GameObject wallTile;
     [Tooltip("Celda que representa al jugador.")]
     public GameObject playerTile;
 
@@ -18,20 +20,20 @@ public class GameMaster: MonoBehaviour
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0},
         {0,0,0,1,0,0,0},
+        {0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0},
     };
 
     private int[,] world = {
-        {0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0},
+        {2,0,2,0,0,0,0},
+        {2,0,0,0,0,0,2},
+        {2,0,0,0,0,0,2},
+        {2,0,0,0,0,0,0},
+        {2,0,0,0,0,0,0},
+        {2,0,0,0,0,0,2},
+        {2,0,0,0,0,0,2},
+        {2,2,2,2,2,2,2},
     };
 
     private (int y, int x) playerPos;
