@@ -14,6 +14,9 @@ public class GameMaster: MonoBehaviour
     [Tooltip("Celda de muro.")]
     public GameObject wallTile;
 
+    [Tooltip("Celda de escalera.")]
+    public GameObject stairTile;
+
     private PieceDict pieceDict;
 
     private GameObject[,] entityInstances;
@@ -39,7 +42,7 @@ public class GameMaster: MonoBehaviour
 
     private int[,] world = {
         {0,0,0,0,0,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,2,0,0,3,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -49,9 +52,9 @@ public class GameMaster: MonoBehaviour
         {0,2,2,2,2,2,2,2,0,2,2,2,0,0,2,2,2,2,2,2,2,2,2,0},
         {0,2,2,2,2,2,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0,0,2,0},
         {0,2,2,2,2,2,0,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,2,0},
-        {0,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0},
-        {0,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0},
-        {0,2,2,2,2,2,0,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,2,0},
+        {0,2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0},
+        {0,2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0},
+        {0,2,2,2,2,2,3,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,2,0},
         {0,2,2,2,2,2,0,0,0,0,0,2,0,0,2,2,2,2,2,2,2,2,2,0},
         {0,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -103,7 +106,7 @@ public class GameMaster: MonoBehaviour
     /// </summary>
     void Awake()
     {
-        GameObject[] gameObjectsArray = new [] { voidTile, playerTile, wallTile };
+        GameObject[] gameObjectsArray = new [] { voidTile, playerTile, wallTile, stairTile };
         pieceDict = new PieceDict(gameObjectsArray);
     }
     
@@ -137,7 +140,19 @@ public class GameMaster: MonoBehaviour
             
             return target;
         } 
-        else if (world[target.y, target.x] == PieceDict.Wall.code && world[pos.y, pos.x] == PieceDict.Wall.code){
+        else if (world[target.y, target.x] == PieceDict.Wall.code 
+            && (world[pos.y, pos.x] == PieceDict.Wall.code || world[pos.y, pos.x] == PieceDict.Stair.code)){
+            // Movimiento
+            entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
+            // Referencias
+            entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
+            entityLayer[target.y, target.x] = PieceDict.Player.code;
+            entityInstances[playerPos.y, playerPos.x] = null;
+            entityLayer[playerPos.y, playerPos.x] = 0;
+
+            return target;
+        }
+        else if (world[target.y, target.x] == PieceDict.Stair.code){
             // Movimiento
             entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
             // Referencias
