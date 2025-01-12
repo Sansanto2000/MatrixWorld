@@ -241,8 +241,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   voidTile: {fileID: 6804756198403083910, guid: b650cea065fa0ca4285582e4c41c389b, type: 3}
-  wallTile: {fileID: 6804756198403083910, guid: d7a86c509eaccf84da24c237ef4c55e9, type: 3}
   playerTile: {fileID: 6718530097768167596, guid: 620712f3ca28c344ab53ceab5ecc8664, type: 3}
+  wallTile: {fileID: 6804756198403083910, guid: d7a86c509eaccf84da24c237ef4c55e9, type: 3}
+  stairTile: {fileID: 6804756198403083910, guid: cbb8eb63835fc2841aa6f57d1ca19f5d, type: 3}
 --- !u!4 &643296525
 Transform:
   m_ObjectHideFlags: 0

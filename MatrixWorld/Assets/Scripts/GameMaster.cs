@@ -14,6 +14,9 @@ public class GameMaster: MonoBehaviour
     [Tooltip("Celda de muro.")]
     public GameObject wallTile;
 
+    [Tooltip("Celda de escalera.")]
+    public GameObject stairTile;
+
     private PieceDict pieceDict;
 
     private GameObject[,] entityInstances;
