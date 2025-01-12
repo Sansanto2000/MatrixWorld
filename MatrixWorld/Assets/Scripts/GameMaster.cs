@@ -140,7 +140,19 @@ public class GameMaster: MonoBehaviour
             
             return target;
         } 
-        else if (world[target.y, target.x] == PieceDict.Wall.code && world[pos.y, pos.x] == PieceDict.Wall.code){
+        else if (world[target.y, target.x] == PieceDict.Wall.code 
+            && (world[pos.y, pos.x] == PieceDict.Wall.code || world[pos.y, pos.x] == PieceDict.Stair.code)){
+            // Movimiento
+            entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
+            // Referencias
+            entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
+            entityLayer[target.y, target.x] = PieceDict.Player.code;
+            entityInstances[playerPos.y, playerPos.x] = null;
+            entityLayer[playerPos.y, playerPos.x] = 0;
+
+            return target;
+        }
+        else if (world[target.y, target.x] == PieceDict.Stair.code){
             // Movimiento
             entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
             // Referencias
