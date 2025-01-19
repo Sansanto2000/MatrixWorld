@@ -245,6 +245,7 @@ MonoBehaviour:
   wallTile: {fileID: 6804756198403083910, guid: d7a86c509eaccf84da24c237ef4c55e9, type: 3}
   stairTile: {fileID: 6804756198403083910, guid: cbb8eb63835fc2841aa6f57d1ca19f5d, type: 3}
   voidTile: {fileID: 6804756198403083910, guid: 91d9859f9253b1349b2cde3d1db293fb, type: 3}
+  tilemap: {fileID: 887005780}
 --- !u!4 &643296525
 Transform:
   m_ObjectHideFlags: 0

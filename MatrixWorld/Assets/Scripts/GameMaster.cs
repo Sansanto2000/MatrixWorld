@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 
 public class GameMaster: MonoBehaviour
@@ -19,6 +20,10 @@ public class GameMaster: MonoBehaviour
 
     [Tooltip("Celda de vacío.")]
     public GameObject voidTile;
+
+    [Header("Tilemaps")]
+    [Tooltip("Tilemap del mundo.")]
+    public Tilemap tilemap;
 
     private PieceDict pieceDict;
 
