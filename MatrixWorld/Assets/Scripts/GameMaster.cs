@@ -109,6 +109,8 @@ public class GameMaster: MonoBehaviour
         }
     }
 
+    private TileBase[,] tiles;
+
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
@@ -120,24 +122,33 @@ public class GameMaster: MonoBehaviour
         GetAllTilesAndPositions();
     }
 
+    
     void GetAllTilesAndPositions()
     {
         BoundsInt bounds = tilemap.cellBounds;
+        (int, int) position = (bounds.xMin, bounds.yMin);
+        int width = bounds.xMax - bounds.xMin;
+        int height = bounds.yMax - bounds.yMin;
+        tiles = new TileBase[width, height];
 
         for (int x = bounds.xMin; x < bounds.xMax; x++)
         {
             for (int y = bounds.yMin; y < bounds.yMax; y++)
             {
                 Vector3Int cellPosition = new Vector3Int(x, y, 0);
-
                 TileBase tile = tilemap.GetTile(cellPosition);
-
+                int adjustedX = x - bounds.xMin;
+                int adjustedY = y - bounds.yMin;
+                tiles[adjustedX, adjustedY] = tile;
                 if (tile != null)
                 {
                     Debug.Log($"Tile encontrado en {cellPosition}: {tile.name}");
+                } else{
+                    Debug.Log($"Tile encontrado en {cellPosition}: vacio");;
                 }
             }
         }
+        Debug.Log($"{tiles}");
     }
     
     /// <summary>
