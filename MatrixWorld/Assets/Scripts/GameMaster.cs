@@ -116,6 +116,28 @@ public class GameMaster: MonoBehaviour
     {
         GameObject[] gameObjectsArray = new [] { floorTile, playerTile, wallTile, stairTile, voidTile };
         pieceDict = new PieceDict(gameObjectsArray);
+
+        GetAllTilesAndPositions();
+    }
+
+    void GetAllTilesAndPositions()
+    {
+        BoundsInt bounds = tilemap.cellBounds;
+
+        for (int x = bounds.xMin; x < bounds.xMax; x++)
+        {
+            for (int y = bounds.yMin; y < bounds.yMax; y++)
+            {
+                Vector3Int cellPosition = new Vector3Int(x, y, 0);
+
+                TileBase tile = tilemap.GetTile(cellPosition);
+
+                if (tile != null)
+                {
+                    Debug.Log($"Tile encontrado en {cellPosition}: {tile.name}");
+                }
+            }
+        }
     }
     
     /// <summary>
