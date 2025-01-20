@@ -27,86 +27,17 @@ public class GameMaster: MonoBehaviour
 
     private PieceDict pieceDict;
 
-    private GameObject[,] entityInstances;
-    private int[,] entityLayer = {
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    };
-
-    private int[,] world = {
-        {4,4,4,4,4,2,2,2,2,2,2,2,4,4,4,4,4,4,4,4,4,4,4,4},
-        {4,4,4,4,4,2,0,0,3,0,0,2,4,4,4,4,4,4,4,4,4,4,4,4},
-        {4,0,0,0,0,2,0,0,0,0,0,2,4,4,4,4,4,4,4,4,4,4,4,4},
-        {4,0,0,0,0,2,0,0,0,0,0,2,4,4,4,4,4,4,4,4,4,4,4,4},
-        {4,0,0,0,0,2,0,0,0,0,0,2,4,4,4,4,4,4,4,4,4,4,4,4},
-        {4,0,0,0,3,2,0,0,0,0,0,2,4,4,4,4,4,4,4,4,4,4,4,4},
-        {4,0,0,0,0,2,0,0,0,0,0,2,4,4,4,4,4,4,4,4,4,4,4,4},
-        {4,4,0,0,0,2,2,2,0,2,2,2,4,4,4,4,4,4,4,4,4,4,4,4},
-        {4,2,2,2,2,2,2,2,0,2,2,2,4,4,2,2,2,2,2,2,2,2,2,4},
-        {4,2,2,2,2,2,0,0,0,0,0,2,4,4,2,0,0,0,0,0,0,0,2,4},
-        {4,2,2,2,2,2,0,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,2,4},
-        {4,2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,4},
-        {4,2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,4},
-        {4,2,2,2,2,2,3,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,2,4},
-        {4,2,2,2,2,2,0,0,0,0,0,2,4,4,2,2,2,2,2,2,2,2,2,4},
-        {4,2,2,2,2,2,2,2,2,2,2,2,4,4,4,4,4,4,4,4,4,4,4,4},
-        {4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4},
-    };
+    private GameObject[] entityInstances;
 
     private (int y, int x) playerPos;
 
-
-    private void worldRendering() 
-    {
-        for (int i = 0; i < world.GetLength(0); i++)
-        {
-            for (int j = 0; j < world.GetLength(1); j++)
-            {
-                GameObject tile;
-                PieceData piece = pieceDict.getPiece(world[i,j]);
-                tile = piece.tile;
-                Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
-            }
-        }
-    }
-
     private void entityRendering() 
     {
-        int rows = entityLayer.GetLength(0);
-        int cols = entityLayer.GetLength(1);
-        entityInstances = new GameObject[rows, cols];
-        GameObject instance;
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                GameObject tile;
-                PieceData piece = pieceDict.getPiece(entityLayer[i,j]); 
-                tile = piece.tile;
-                if(piece.name == "Player") {
-                    playerPos = (i, j);
-                    instance = Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
-                } else {
-                    instance = null;
-                }
-                entityInstances[i,j] = instance;
-            }
-        }
+        entityInstances = new GameObject[1];
+        PieceData piece = pieceDict.getPiece(1); 
+        GameObject tile = piece.tile;
+        entityInstances[0] = Instantiate(tile, new Vector2(0, 0), Quaternion.identity);
+        playerPos = (0, 0);
     }
 
     private TileBase[,] tiles;
@@ -126,7 +57,6 @@ public class GameMaster: MonoBehaviour
     void GetAllTilesAndPositions()
     {
         BoundsInt bounds = tilemap.cellBounds;
-        (int, int) position = (bounds.xMin, bounds.yMin);
         int width = bounds.xMax - bounds.xMin;
         int height = bounds.yMax - bounds.yMin;
         tiles = new TileBase[width, height];
@@ -140,12 +70,12 @@ public class GameMaster: MonoBehaviour
                 int adjustedX = x - bounds.xMin;
                 int adjustedY = y - bounds.yMin;
                 tiles[adjustedX, adjustedY] = tile;
-                if (tile != null)
-                {
-                    Debug.Log($"Tile encontrado en {cellPosition}: {tile.name}");
-                } else{
-                    Debug.Log($"Tile encontrado en {cellPosition}: vacio");;
-                }
+                // if (tile != null)
+                // {
+                //     Debug.Log($"Tile encontrado en {cellPosition}: {tile.name}");
+                // } else{
+                //     Debug.Log($"Tile encontrado en {cellPosition}: vacio");;
+                // }
             }
         }
         Debug.Log($"{tiles}");
@@ -157,7 +87,6 @@ public class GameMaster: MonoBehaviour
     /// </summary>
     void Start()
     {
-        worldRendering();
         entityRendering();
         updateCamera();
     }
@@ -168,40 +97,22 @@ public class GameMaster: MonoBehaviour
             Camera.main.transform.position = new Vector3(playerPos.x, -playerPos.y, Camera.main.transform.position.z);
     }
 
-    (int y, int x) move(int[,] world, (int y, int x) pos, (int y, int x) target)
+    (int y, int x) move((int y, int x) pos, (int y, int x) target)
     {
-        if(world[target.y, target.x] == PieceDict.Void.code) {
-            // Movimiento
-            entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
-            // Referencias
-            entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
-            entityLayer[target.y, target.x] = PieceDict.Player.code;
-            entityInstances[playerPos.y, playerPos.x] = null;
-            entityLayer[playerPos.y, playerPos.x] = 0;
-            
+        if(tiles[target.y, target.x] == null) {
+            return pos;
+        }
+        else if(tiles[target.y, target.x].name == "Floor") {
+            entityInstances[0].transform.position = new Vector3(target.x, target.y, 0);
             return target;
         } 
-        else if (world[target.y, target.x] == PieceDict.Wall.code 
-            && (world[pos.y, pos.x] == PieceDict.Wall.code || world[pos.y, pos.x] == PieceDict.Stair.code)){
-            // Movimiento
-            entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
-            // Referencias
-            entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
-            entityLayer[target.y, target.x] = PieceDict.Player.code;
-            entityInstances[playerPos.y, playerPos.x] = null;
-            entityLayer[playerPos.y, playerPos.x] = 0;
-
+        else if (tiles[target.y, target.x].name == "Wall"
+            && (tiles[pos.y, pos.x].name == "Wall" || tiles[pos.y, pos.x].name == "Stair")){
+            entityInstances[0].transform.position = new Vector3(target.x, target.y, 0);
             return target;
         }
-        else if (world[target.y, target.x] == PieceDict.Stair.code){
-            // Movimiento
-            entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
-            // Referencias
-            entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
-            entityLayer[target.y, target.x] = PieceDict.Player.code;
-            entityInstances[playerPos.y, playerPos.x] = null;
-            entityLayer[playerPos.y, playerPos.x] = 0;
-
+        else if (tiles[target.y, target.x].name == "Stair"){
+            entityInstances[0].transform.position = new Vector3(target.x, target.y, 0);
             return target;
         }
         else {
@@ -211,36 +122,39 @@ public class GameMaster: MonoBehaviour
     }
 
     /// <summary>
-    /// Update is called every frame, if the MonoBehaviour is enabled.
+    /// Update is called every frame, if the MonoBehaviour is enabled.a
     /// </summary>
     void Update()
     {
+        BoundsInt bounds = tilemap.cellBounds;
+        Debug.Log(playerPos+ "" + tilemap.cellBounds);
+
         if (Input.GetKeyDown(KeyCode.W)) 
         {
             (int y, int x) target = (playerPos.y - 1, playerPos.x);
-            if (target.y >= 0) {
-                playerPos = move(world, playerPos, target);
+            if (target.y + bounds.yMin >= bounds.yMin) {
+                playerPos = move(playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.S)) 
         {
             (int y, int x) target = (playerPos.y + 1, playerPos.x);
-            if (target.y < world.GetLength(0)) {
-                playerPos = move(world, playerPos, target);
+            if (target.y + bounds.yMin < bounds.yMax) {
+                playerPos = move(playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.D)) 
         {
             (int y, int x) target = (playerPos.y, playerPos.x + 1);
-            if (target.x < world.GetLength(1)) {
-                playerPos = move(world, playerPos, target);
+            if (target.x + bounds.xMin < bounds.xMax) {
+                playerPos = move(playerPos, target);
             }
         }
         else if (Input.GetKeyDown(KeyCode.A)) 
         {
             (int y, int x) target = (playerPos.y, playerPos.x - 1);
-            if (target.x >= 0) {
-                playerPos = move(world, playerPos, target);
+            if (target.x + bounds.xMin >= bounds.xMin) {
+                playerPos = move(playerPos, target);
             }
         }
         updateCamera();
