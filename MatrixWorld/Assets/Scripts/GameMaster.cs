@@ -6,20 +6,8 @@ public class GameMaster: MonoBehaviour
 {
     [Header("Configuración de celdas")]
 
-    // [Tooltip("Celda de suelo.")]
-    // public GameObject floorTile;
-
     [Tooltip("Celda que representa al jugador.")]
     public GameObject playerTile;
-
-    // [Tooltip("Celda de muro.")]
-    // public GameObject wallTile;
-
-    // [Tooltip("Celda de escalera.")]
-    // public GameObject stairTile;
-
-    // [Tooltip("Celda de vacío.")]
-    // public GameObject voidTile;
 
     [Header("Tilemaps")]
     [Tooltip("Tilemap del mundo.")]
@@ -43,9 +31,6 @@ public class GameMaster: MonoBehaviour
     /// </summary>
     void Awake()
     {
-        // GameObject[] gameObjectsArray = new [] { floorTile, playerTile, wallTile, stairTile, voidTile };
-        // pieceDict = new PieceDict(gameObjectsArray);
-
         GetAllTilesAndPositions();
     }
 
@@ -109,7 +94,7 @@ public class GameMaster: MonoBehaviour
         // else 
         if(targetTile.name == "Floor") {
             player.transform.position = targetPosFix;
-            return targetPosFix;
+            return targetPos;
         } 
         // else if (tiles[target.y, target.x].name == "Wall"
         //     && (tiles[pos.y, pos.x].name == "Wall" || tiles[pos.y, pos.x].name == "Stair")){
@@ -133,7 +118,6 @@ public class GameMaster: MonoBehaviour
     {
         Vector3  playerPos = player.transform.position;
         BoundsInt bounds = tilemap.cellBounds;
-        //Debug.Log(playerPos+ "" + tilemap.cellBounds);
 
         if (Input.GetKeyDown(KeyCode.W)) 
         {
