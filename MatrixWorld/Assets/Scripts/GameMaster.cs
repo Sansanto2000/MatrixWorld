@@ -133,23 +133,18 @@ public class GameMaster: MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.S)) 
         {
             Vector3 targetPos = new Vector3(playerPos.x, playerPos.y-1, 0);
-            Debug.Log("" + playerPos.y + " | " + targetPos.y);
             playerPos = move(playerPos, targetPos);
         }
-        // else if (Input.GetKeyDown(KeyCode.D)) 
-        // {
-        //     (float y, float x) target = (playerPos.y, playerPos.x + 1);
-        //     if (target.x + bounds.xMin < bounds.xMax) {
-        //         playerPos = move(playerPos, target);
-        //     }
-        // }
-        // else if (Input.GetKeyDown(KeyCode.A)) 
-        // {
-        //     (float y, float x) target = (playerPos.y, playerPos.x - 1);
-        //     if (target.x + bounds.xMin >= bounds.xMin) {
-        //         playerPos = move(playerPos, target);
-        //     }
-        // }
+        else if (Input.GetKeyDown(KeyCode.D)) 
+        {
+            Vector3 targetPos = new Vector3(playerPos.x+1, playerPos.y, 0);
+            playerPos = move(playerPos, targetPos);
+        }
+        else if (Input.GetKeyDown(KeyCode.A)) 
+        {
+            Vector3 targetPos = new Vector3(playerPos.x-1, playerPos.y, 0);
+            playerPos = move(playerPos, targetPos);
+        }
         updateCamera();
     }
 }
