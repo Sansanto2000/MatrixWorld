@@ -6,20 +6,20 @@ public class GameMaster: MonoBehaviour
 {
     [Header("Configuración de celdas")]
 
-    [Tooltip("Celda de suelo.")]
-    public GameObject floorTile;
+    // [Tooltip("Celda de suelo.")]
+    // public GameObject floorTile;
 
     [Tooltip("Celda que representa al jugador.")]
     public GameObject playerTile;
 
-    [Tooltip("Celda de muro.")]
-    public GameObject wallTile;
+    // [Tooltip("Celda de muro.")]
+    // public GameObject wallTile;
 
-    [Tooltip("Celda de escalera.")]
-    public GameObject stairTile;
+    // [Tooltip("Celda de escalera.")]
+    // public GameObject stairTile;
 
-    [Tooltip("Celda de vacío.")]
-    public GameObject voidTile;
+    // [Tooltip("Celda de vacío.")]
+    // public GameObject voidTile;
 
     [Header("Tilemaps")]
     [Tooltip("Tilemap del mundo.")]
@@ -27,28 +27,24 @@ public class GameMaster: MonoBehaviour
 
     private PieceDict pieceDict;
 
-    private GameObject[] entityInstances;
+    private GameObject player;
 
-    private (int y, int x) playerPos;
+    private TileBase[,] tiles;
 
     private void entityRendering() 
     {
-        entityInstances = new GameObject[1];
-        PieceData piece = pieceDict.getPiece(1); 
-        GameObject tile = piece.tile;
-        entityInstances[0] = Instantiate(tile, new Vector2(0, 0), Quaternion.identity);
-        playerPos = (0, 0);
+        Vector3Int originCell = tilemap.WorldToCell(new Vector3(0, 0, 0));
+        Vector3 originPosFix = tilemap.GetCellCenterWorld(originCell);
+        player = Instantiate(playerTile, originPosFix, Quaternion.identity);
     }
-
-    private TileBase[,] tiles;
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
     void Awake()
     {
-        GameObject[] gameObjectsArray = new [] { floorTile, playerTile, wallTile, stairTile, voidTile };
-        pieceDict = new PieceDict(gameObjectsArray);
+        // GameObject[] gameObjectsArray = new [] { floorTile, playerTile, wallTile, stairTile, voidTile };
+        // pieceDict = new PieceDict(gameObjectsArray);
 
         GetAllTilesAndPositions();
     }
@@ -72,13 +68,12 @@ public class GameMaster: MonoBehaviour
                 tiles[adjustedX, adjustedY] = tile;
                 // if (tile != null)
                 // {
-                //     Debug.Log($"Tile encontrado en {cellPosition}: {tile.name}");
+                //     Debug.Log($"{cellPosition}: {tile.name}");
                 // } else{
-                //     Debug.Log($"Tile encontrado en {cellPosition}: vacio");;
+                //     Debug.Log($"{cellPosition}: vacio");;
                 // }
             }
         }
-        Debug.Log($"{tiles}");
     }
     
     /// <summary>
@@ -93,30 +88,40 @@ public class GameMaster: MonoBehaviour
 
     void updateCamera()
     {
-        if(playerPos.x != Camera.main.transform.position.x || playerPos.y != Camera.main.transform.position.y)
-            Camera.main.transform.position = new Vector3(playerPos.x, -playerPos.y, Camera.main.transform.position.z);
+        Vector3  playerPos = player.transform.position;
+        Vector3  cameraPos = Camera.main.transform.position;
+        if(playerPos.x != cameraPos.x || playerPos.y != cameraPos.y)
+            cameraPos = new Vector3(playerPos.x, -playerPos.y, cameraPos.z);
     }
 
-    (int y, int x) move((int y, int x) pos, (int y, int x) target)
+    Vector3 move(Vector3 objectPos, Vector3 targetPos)
     {
-        if(tiles[target.y, target.x] == null) {
-            return pos;
-        }
-        else if(tiles[target.y, target.x].name == "Floor") {
-            entityInstances[0].transform.position = new Vector3(target.x, target.y, 0);
-            return target;
+        Vector3Int targetCell = tilemap.WorldToCell(targetPos);
+        TileBase targetTile = tilemap.GetTile(targetCell);
+        Vector3 targetPosFix = tilemap.GetCellCenterWorld(targetCell);
+        
+        Vector3Int objectCell = tilemap.WorldToCell(objectPos);
+        TileBase objectTile = tilemap.GetTile(objectCell);
+
+        // if(tiles[target.y, target.x] == null) {
+        //     return pos;
+        // }
+        // else 
+        if(targetTile.name == "Floor") {
+            player.transform.position = targetPosFix;
+            return targetPosFix;
         } 
-        else if (tiles[target.y, target.x].name == "Wall"
-            && (tiles[pos.y, pos.x].name == "Wall" || tiles[pos.y, pos.x].name == "Stair")){
-            entityInstances[0].transform.position = new Vector3(target.x, target.y, 0);
-            return target;
-        }
-        else if (tiles[target.y, target.x].name == "Stair"){
-            entityInstances[0].transform.position = new Vector3(target.x, target.y, 0);
-            return target;
-        }
+        // else if (tiles[target.y, target.x].name == "Wall"
+        //     && (tiles[pos.y, pos.x].name == "Wall" || tiles[pos.y, pos.x].name == "Stair")){
+        //     player.transform.position = new Vector3(target.x, target.y, 0);
+        //     return target;
+        // }
+        // else if (tiles[target.y, target.x].name == "Stair"){
+        //     player.transform.position = new Vector3(target.x, target.y, 0);
+        //     return target;
+        // }
         else {
-            return pos;
+            return objectPos;
         }
         
     }
@@ -126,37 +131,38 @@ public class GameMaster: MonoBehaviour
     /// </summary>
     void Update()
     {
+        Vector3  playerPos = player.transform.position;
         BoundsInt bounds = tilemap.cellBounds;
-        Debug.Log(playerPos+ "" + tilemap.cellBounds);
+        //Debug.Log(playerPos+ "" + tilemap.cellBounds);
 
         if (Input.GetKeyDown(KeyCode.W)) 
         {
-            (int y, int x) target = (playerPos.y - 1, playerPos.x);
-            if (target.y + bounds.yMin >= bounds.yMin) {
-                playerPos = move(playerPos, target);
+            Vector3 targetPos = new Vector3((int) playerPos.x, (int) playerPos.y+1, 0);
+            if (bounds.yMin - playerPos.y < 0) {
+                playerPos = move(playerPos, targetPos);
             }
         }
-        else if (Input.GetKeyDown(KeyCode.S)) 
-        {
-            (int y, int x) target = (playerPos.y + 1, playerPos.x);
-            if (target.y + bounds.yMin < bounds.yMax) {
-                playerPos = move(playerPos, target);
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.D)) 
-        {
-            (int y, int x) target = (playerPos.y, playerPos.x + 1);
-            if (target.x + bounds.xMin < bounds.xMax) {
-                playerPos = move(playerPos, target);
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.A)) 
-        {
-            (int y, int x) target = (playerPos.y, playerPos.x - 1);
-            if (target.x + bounds.xMin >= bounds.xMin) {
-                playerPos = move(playerPos, target);
-            }
-        }
+        // else if (Input.GetKeyDown(KeyCode.S)) 
+        // {
+        //     (float y, float x) target = (playerPos.y + 1, playerPos.x);
+        //     if (target.y + bounds.yMin < bounds.yMax) {
+        //         playerPos = move(playerPos, target);
+        //     }
+        // }
+        // else if (Input.GetKeyDown(KeyCode.D)) 
+        // {
+        //     (float y, float x) target = (playerPos.y, playerPos.x + 1);
+        //     if (target.x + bounds.xMin < bounds.xMax) {
+        //         playerPos = move(playerPos, target);
+        //     }
+        // }
+        // else if (Input.GetKeyDown(KeyCode.A)) 
+        // {
+        //     (float y, float x) target = (playerPos.y, playerPos.x - 1);
+        //     if (target.x + bounds.xMin >= bounds.xMin) {
+        //         playerPos = move(playerPos, target);
+        //     }
+        // }
         updateCamera();
     }
 }
