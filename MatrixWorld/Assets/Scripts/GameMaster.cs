@@ -122,9 +122,7 @@ public class GameMaster: MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W)) 
         {
             Vector3 targetPos = new Vector3((int) playerPos.x, (int) playerPos.y+1, 0);
-            if (bounds.yMin - playerPos.y < 0) {
-                playerPos = move(playerPos, targetPos);
-            }
+            playerPos = move(playerPos, targetPos);
         }
         // else if (Input.GetKeyDown(KeyCode.S)) 
         // {
