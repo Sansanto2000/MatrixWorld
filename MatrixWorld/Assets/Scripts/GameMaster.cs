@@ -88,6 +88,13 @@ public class GameMaster: MonoBehaviour
         Vector3Int objectCell = tilemap.WorldToCell(objectPos);
         TileBase objectTile = tilemap.GetTile(objectCell);
 
+        if (objectTile != null)
+        {
+            Debug.Log($"Target: {targetPosFix}: {objectTile.name}");
+        } else{
+            Debug.Log($"Target: {targetPosFix}: vacio");;
+        }
+
         if(targetTile == null) {
             return objectPos;
         }
@@ -117,20 +124,18 @@ public class GameMaster: MonoBehaviour
     void Update()
     {
         Vector3  playerPos = player.transform.position;
-        BoundsInt bounds = tilemap.cellBounds;
 
         if (Input.GetKeyDown(KeyCode.W)) 
         {
-            Vector3 targetPos = new Vector3((int) playerPos.x, (int) playerPos.y+1, 0);
+            Vector3 targetPos = new Vector3(playerPos.x, playerPos.y+1, 0);
             playerPos = move(playerPos, targetPos);
         }
-        // else if (Input.GetKeyDown(KeyCode.S)) 
-        // {
-        //     (float y, float x) target = (playerPos.y + 1, playerPos.x);
-        //     if (target.y + bounds.yMin < bounds.yMax) {
-        //         playerPos = move(playerPos, target);
-        //     }
-        // }
+        else if (Input.GetKeyDown(KeyCode.S)) 
+        {
+            Vector3 targetPos = new Vector3(playerPos.x, playerPos.y-1, 0);
+            Debug.Log("" + playerPos.y + " | " + targetPos.y);
+            playerPos = move(playerPos, targetPos);
+        }
         // else if (Input.GetKeyDown(KeyCode.D)) 
         // {
         //     (float y, float x) target = (playerPos.y, playerPos.x + 1);
