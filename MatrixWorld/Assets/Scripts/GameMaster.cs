@@ -88,10 +88,10 @@ public class GameMaster: MonoBehaviour
         Vector3Int objectCell = tilemap.WorldToCell(objectPos);
         TileBase objectTile = tilemap.GetTile(objectCell);
 
-        // if(tiles[target.y, target.x] == null) {
-        //     return pos;
-        // }
-        // else 
+        if(targetTile == null) {
+            return objectPos;
+        }
+        else 
         if(targetTile.name == "Floor") {
             player.transform.position = targetPosFix;
             return targetPos;
