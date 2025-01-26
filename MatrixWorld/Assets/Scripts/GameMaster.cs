@@ -1,113 +1,93 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 
 public class GameMaster: MonoBehaviour
 {
     [Header("Configuración de celdas")]
 
-    [Tooltip("Celda de vacío.")]
-    public GameObject voidTile;
-
     [Tooltip("Celda que representa al jugador.")]
     public GameObject playerTile;
 
-    [Tooltip("Celda de muro.")]
-    public GameObject wallTile;
+    [Header("Tilemaps")]
+    [Tooltip("Tilemap del mundo.")]
+    public Tilemap worldTilemap;
 
-    [Tooltip("Celda de escalera.")]
-    public GameObject stairTile;
+    [Tooltip("Tilemap del entaidades.")]
+    public Tilemap entityTilemap;
+
+    [Header("Camera")]
+    [Tooltip("Quiet")]
+    public bool cameraQuiet = false;
 
     private PieceDict pieceDict;
 
-    private GameObject[,] entityInstances;
-    private int[,] entityLayer = {
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    };
+    private GameObject player;
 
-    private int[,] world = {
-        {0,0,0,0,0,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,2,0,0,3,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,2,2,2,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,2,2,2,2,2,2,2,0,2,2,2,0,0,2,2,2,2,2,2,2,2,2,0},
-        {0,2,2,2,2,2,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0,0,2,0},
-        {0,2,2,2,2,2,0,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,2,0},
-        {0,2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0},
-        {0,2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0},
-        {0,2,2,2,2,2,3,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,2,0},
-        {0,2,2,2,2,2,0,0,0,0,0,2,0,0,2,2,2,2,2,2,2,2,2,0},
-        {0,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    };
-
-    private (int y, int x) playerPos;
-
-
-    private void worldRendering() 
-    {
-        for (int i = 0; i < world.GetLength(0); i++)
-        {
-            for (int j = 0; j < world.GetLength(1); j++)
-            {
-                GameObject tile;
-                PieceData piece = pieceDict.getPiece(world[i,j]);
-                tile = piece.tile;
-                Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
-            }
-        }
-    }
-
-    private void entityRendering() 
-    {
-        int rows = entityLayer.GetLength(0);
-        int cols = entityLayer.GetLength(1);
-        entityInstances = new GameObject[rows, cols];
-        GameObject instance;
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                GameObject tile;
-                PieceData piece = pieceDict.getPiece(entityLayer[i,j]); 
-                tile = piece.tile;
-                if(piece.name == "Player") {
-                    playerPos = (i, j);
-                    instance = Instantiate(tile, new Vector2(j, -i), Quaternion.identity);
-                } else {
-                    instance = null;
-                }
-                entityInstances[i,j] = instance;
-            }
-        }
-    }
+    private TileBase[,] tiles;
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
     void Awake()
     {
-        GameObject[] gameObjectsArray = new [] { voidTile, playerTile, wallTile, stairTile };
-        pieceDict = new PieceDict(gameObjectsArray);
+        GetAllTilesAndPositions();
+        GetEntitiesTiles();
+    }
+
+    
+    void GetAllTilesAndPositions()
+    {
+        BoundsInt bounds = worldTilemap.cellBounds;
+        int width = bounds.xMax - bounds.xMin;
+        int height = bounds.yMax - bounds.yMin;
+        tiles = new TileBase[width, height];
+
+        for (int x = bounds.xMin; x < bounds.xMax; x++)
+        {
+            for (int y = bounds.yMin; y < bounds.yMax; y++)
+            {
+                Vector3Int cellPosition = new Vector3Int(x, y, 0);
+                TileBase tile = worldTilemap.GetTile(cellPosition);
+                int adjustedX = x - bounds.xMin;
+                int adjustedY = y - bounds.yMin;
+                tiles[adjustedX, adjustedY] = tile;
+            }
+        }
+    }
+
+    void GetEntitiesTiles()
+    {
+        BoundsInt bounds = entityTilemap.cellBounds;
+
+        for (int x = bounds.xMin; x < bounds.xMax; x++)
+        {
+            for (int y = bounds.yMin; y < bounds.yMax; y++)
+            {
+                Vector3Int cellPosition = new Vector3Int(x, y, 0);
+                TileBase tileBase = entityTilemap.GetTile(cellPosition);
+                if (tileBase != null && tileBase.name == "Player") 
+                {
+                    if (tileBase is Tile tile)
+                    {
+                        Vector3 originPosFix = entityTilemap.GetCellCenterWorld(cellPosition);
+
+                        GameObject obj = new GameObject("Player");
+                        obj.transform.position = originPosFix;
+                        SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
+                        spriteRenderer.sprite = tile.sprite;
+                        spriteRenderer.sortingLayerName = entityTilemap.GetComponent<TilemapRenderer>().sortingLayerName;
+                
+                        player = obj;
+
+                        entityTilemap.SetTile(cellPosition, null);
+                        return;   
+                    }
+                }
+            }
+        }
+        
+        Debug.LogWarning("Jugador no encontrado en el Tilemap.");
     }
     
     /// <summary>
@@ -116,91 +96,78 @@ public class GameMaster: MonoBehaviour
     /// </summary>
     void Start()
     {
-        worldRendering();
-        entityRendering();
         updateCamera();
     }
 
     void updateCamera()
     {
-        if(playerPos.x != Camera.main.transform.position.x || playerPos.y != Camera.main.transform.position.y)
-            Camera.main.transform.position = new Vector3(playerPos.x, -playerPos.y, Camera.main.transform.position.z);
+        if(cameraQuiet){
+            return;
+        }
+        Vector3  playerPos = player.transform.position;
+        Transform  cameraTransform = Camera.main.transform;
+        if(playerPos.x != cameraTransform.position.x || playerPos.y != cameraTransform.position.y)
+            cameraTransform.position = new Vector3(playerPos.x, playerPos.y, cameraTransform.position.z);
     }
 
-    (int y, int x) move(int[,] world, (int y, int x) pos, (int y, int x) target)
+    Vector3 move(Vector3 objectPos, Vector3 targetPos)
     {
-        if(world[target.y, target.x] == PieceDict.Void.code) {
-            // Movimiento
-            entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
-            // Referencias
-            entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
-            entityLayer[target.y, target.x] = PieceDict.Player.code;
-            entityInstances[playerPos.y, playerPos.x] = null;
-            entityLayer[playerPos.y, playerPos.x] = 0;
-            
-            return target;
-        } 
-        else if (world[target.y, target.x] == PieceDict.Wall.code 
-            && (world[pos.y, pos.x] == PieceDict.Wall.code || world[pos.y, pos.x] == PieceDict.Stair.code)){
-            // Movimiento
-            entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
-            // Referencias
-            entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
-            entityLayer[target.y, target.x] = PieceDict.Player.code;
-            entityInstances[playerPos.y, playerPos.x] = null;
-            entityLayer[playerPos.y, playerPos.x] = 0;
+        Vector3Int targetCell = worldTilemap.WorldToCell(targetPos);
+        TileBase targetTile = worldTilemap.GetTile(targetCell);
+        Vector3 targetPosFix = worldTilemap.GetCellCenterWorld(targetCell);
+        
+        Vector3Int objectCell = worldTilemap.WorldToCell(objectPos);
+        TileBase objectTile = worldTilemap.GetTile(objectCell);
 
-            return target;
+        if(targetTile == null) {
+            return objectPos;
         }
-        else if (world[target.y, target.x] == PieceDict.Stair.code){
-            // Movimiento
-            entityInstances[playerPos.y, playerPos.x].transform.position = new Vector3(target.x, -target.y, 0);
-            // Referencias
-            entityInstances[target.y, target.x] = entityInstances[playerPos.y, playerPos.x];
-            entityLayer[target.y, target.x] = PieceDict.Player.code;
-            entityInstances[playerPos.y, playerPos.x] = null;
-            entityLayer[playerPos.y, playerPos.x] = 0;
-
-            return target;
+        else 
+        if(targetTile.name == "Floor") {
+            player.transform.position = targetPosFix;
+            return targetPos;
+        } 
+        else if (targetTile.name == "Wall"
+            && (objectTile.name == "Wall" || objectTile.name == "Stair")){
+            player.transform.position = targetPosFix;
+            return targetPos;
+        }
+        else if (targetTile.name == "Stair"){
+            player.transform.position = targetPosFix;
+            return targetPos;
         }
         else {
-            return pos;
+            return objectPos;
         }
         
     }
 
     /// <summary>
-    /// Update is called every frame, if the MonoBehaviour is enabled.
+    /// Update is called every frame, if the MonoBehaviour is enabled.a
     /// </summary>
     void Update()
     {
+        Vector3  playerPos = player.transform.position;
+
         if (Input.GetKeyDown(KeyCode.W)) 
         {
-            (int y, int x) target = (playerPos.y - 1, playerPos.x);
-            if (target.y >= 0) {
-                playerPos = move(world, playerPos, target);
-            }
+            Vector3 targetPos = new Vector3(playerPos.x, playerPos.y+1, 0);
+            playerPos = move(playerPos, targetPos);
         }
         else if (Input.GetKeyDown(KeyCode.S)) 
         {
-            (int y, int x) target = (playerPos.y + 1, playerPos.x);
-            if (target.y < world.GetLength(0)) {
-                playerPos = move(world, playerPos, target);
-            }
+            Vector3 targetPos = new Vector3(playerPos.x, playerPos.y-1, 0);
+            playerPos = move(playerPos, targetPos);
         }
         else if (Input.GetKeyDown(KeyCode.D)) 
         {
-            (int y, int x) target = (playerPos.y, playerPos.x + 1);
-            if (target.x < world.GetLength(1)) {
-                playerPos = move(world, playerPos, target);
-            }
+            Vector3 targetPos = new Vector3(playerPos.x+1, playerPos.y, 0);
+            playerPos = move(playerPos, targetPos);
         }
         else if (Input.GetKeyDown(KeyCode.A)) 
         {
-            (int y, int x) target = (playerPos.y, playerPos.x - 1);
-            if (target.x >= 0) {
-                playerPos = move(world, playerPos, target);
-            }
+            Vector3 targetPos = new Vector3(playerPos.x-1, playerPos.y, 0);
+            playerPos = move(playerPos, targetPos);
         }
         updateCamera();
     }
