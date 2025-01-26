@@ -11,7 +11,10 @@ public class GameMaster: MonoBehaviour
 
     [Header("Tilemaps")]
     [Tooltip("Tilemap del mundo.")]
-    public Tilemap tilemap;
+    public Tilemap worldTilemap;
+
+    [Tooltip("Tilemap del entaidades.")]
+    public Tilemap entityTilemap;
 
     [Header("Camera")]
     [Tooltip("Quiet")]
@@ -23,25 +26,19 @@ public class GameMaster: MonoBehaviour
 
     private TileBase[,] tiles;
 
-    private void entityRendering() 
-    {
-        Vector3Int originCell = tilemap.WorldToCell(new Vector3(0, 0, 0));
-        Vector3 originPosFix = tilemap.GetCellCenterWorld(originCell);
-        player = Instantiate(playerTile, originPosFix, Quaternion.identity);
-    }
-
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
     void Awake()
     {
         GetAllTilesAndPositions();
+        GetEntitiesTiles();
     }
 
     
     void GetAllTilesAndPositions()
     {
-        BoundsInt bounds = tilemap.cellBounds;
+        BoundsInt bounds = worldTilemap.cellBounds;
         int width = bounds.xMax - bounds.xMin;
         int height = bounds.yMax - bounds.yMin;
         tiles = new TileBase[width, height];
@@ -51,7 +48,7 @@ public class GameMaster: MonoBehaviour
             for (int y = bounds.yMin; y < bounds.yMax; y++)
             {
                 Vector3Int cellPosition = new Vector3Int(x, y, 0);
-                TileBase tile = tilemap.GetTile(cellPosition);
+                TileBase tile = worldTilemap.GetTile(cellPosition);
                 int adjustedX = x - bounds.xMin;
                 int adjustedY = y - bounds.yMin;
                 tiles[adjustedX, adjustedY] = tile;
@@ -64,6 +61,40 @@ public class GameMaster: MonoBehaviour
             }
         }
     }
+
+    void GetEntitiesTiles()
+    {
+        BoundsInt bounds = entityTilemap.cellBounds;
+
+        for (int x = bounds.xMin; x < bounds.xMax; x++)
+        {
+            for (int y = bounds.yMin; y < bounds.yMax; y++)
+            {
+                Vector3Int cellPosition = new Vector3Int(x, y, 0);
+                TileBase tileBase = entityTilemap.GetTile(cellPosition);
+                if (tileBase != null && tileBase.name == "Player") 
+                {
+                    if (tileBase is Tile tile)
+                    {
+                        Vector3 originPosFix = entityTilemap.GetCellCenterWorld(cellPosition);
+
+                        GameObject obj = new GameObject("Player");
+                        obj.transform.position = originPosFix;
+                        SpriteRenderer spriteRenderer = obj.AddComponent<SpriteRenderer>();
+                        spriteRenderer.sprite = tile.sprite;
+                        spriteRenderer.sortingLayerName = entityTilemap.GetComponent<TilemapRenderer>().sortingLayerName;
+                
+                        player = obj;
+
+                        entityTilemap.SetTile(cellPosition, null);
+                        return;   
+                    }
+                }
+            }
+        }
+        
+        Debug.LogWarning("Jugador no encontrado en el Tilemap.");
+    }
     
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -71,7 +102,6 @@ public class GameMaster: MonoBehaviour
     /// </summary>
     void Start()
     {
-        entityRendering();
         updateCamera();
     }
 
@@ -88,19 +118,18 @@ public class GameMaster: MonoBehaviour
 
     Vector3 move(Vector3 objectPos, Vector3 targetPos)
     {
-        Vector3Int targetCell = tilemap.WorldToCell(targetPos);
-        TileBase targetTile = tilemap.GetTile(targetCell);
-        Vector3 targetPosFix = tilemap.GetCellCenterWorld(targetCell);
+        Vector3Int targetCell = worldTilemap.WorldToCell(targetPos);
+        TileBase targetTile = worldTilemap.GetTile(targetCell);
+        Vector3 targetPosFix = worldTilemap.GetCellCenterWorld(targetCell);
         
-        Vector3Int objectCell = tilemap.WorldToCell(objectPos);
-        TileBase objectTile = tilemap.GetTile(objectCell);
-
         // if (objectTile != null)
         // {
         //     Debug.Log($"Target: {targetPosFix}: {objectTile.name}");
         // } else{
         //     Debug.Log($"Target: {targetPosFix}: vacio");;
         // }
+        Vector3Int objectCell = worldTilemap.WorldToCell(objectPos);
+        TileBase objectTile = worldTilemap.GetTile(objectCell);
 
         if(targetTile == null) {
             return objectPos;
