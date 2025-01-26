@@ -180,7 +180,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -269,7 +269,7 @@ GameObject:
   - component: {fileID: 650664914}
   - component: {fileID: 650664913}
   m_Layer: 0
-  m_Name: Grid
+  m_Name: WorldGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1000,8 +1000,8 @@ Tilemap:
   - first: {x: 2, y: 2, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 1
-      m_TileSpriteIndex: 1
+      m_TileIndex: 3
+      m_TileSpriteIndex: 3
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -2491,17 +2491,21 @@ Tilemap:
   m_TileAssetArray:
   - m_RefCount: 29
     m_Data: {fileID: 11400000, guid: a61169da8f58ab7409d8c5c6e2637bc9, type: 2}
-  - m_RefCount: 160
+  - m_RefCount: 159
     m_Data: {fileID: 11400000, guid: 333ef6b46d165f34da48ac6ec8123f00, type: 2}
   - m_RefCount: 20
     m_Data: {fileID: 11400000, guid: 15a6b77341902974da533903812453f7, type: 2}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 49a8386a0d40c544abb1d858578f62fa, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 29
     m_Data: {fileID: 7223950226953391895, guid: f610ab78dd3db084abf3a24d703d6d4a, type: 3}
-  - m_RefCount: 160
+  - m_RefCount: 159
     m_Data: {fileID: -8377130690987618698, guid: f610ab78dd3db084abf3a24d703d6d4a, type: 3}
   - m_RefCount: 20
     m_Data: {fileID: -4684333735789482159, guid: f610ab78dd3db084abf3a24d703d6d4a, type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: 7482667652216324306, guid: 5a06d04373856694fb871e81bcbc69d2, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 209
     m_Data:
@@ -2548,6 +2552,50 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1 &1097213793
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1097213795}
+  - component: {fileID: 1097213794}
+  m_Layer: 0
+  m_Name: EntityGrid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!156049354 &1097213794
+Grid:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1097213793}
+  m_Enabled: 1
+  m_CellSize: {x: 1, y: 1, z: 0}
+  m_CellGap: {x: 0, y: 0, z: 0}
+  m_CellLayout: 0
+  m_CellSwizzle: 0
+--- !u!4 &1097213795
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1097213793}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2555,3 +2603,4 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 643296525}
   - {fileID: 650664914}
+  - {fileID: 1097213795}
