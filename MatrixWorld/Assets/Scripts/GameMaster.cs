@@ -82,8 +82,6 @@ public class GameMaster: MonoBehaviour
         }
         Vector3  playerPos = player.transform.position;
         Transform  cameraTransform = Camera.main.transform;
-        //Debug.Log(playerPos.x != cameraPos.x || playerPos.y != cameraPos.y);
-        Debug.Log("Cam2 " + cameraTransform.position.x+" | "+cameraTransform.position.y);
         if(playerPos.x != cameraTransform.position.x || playerPos.y != cameraTransform.position.y)
             cameraTransform.position = new Vector3(playerPos.x, playerPos.y, cameraTransform.position.z);
     }
