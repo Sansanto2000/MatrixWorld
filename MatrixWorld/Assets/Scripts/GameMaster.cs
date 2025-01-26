@@ -115,10 +115,10 @@ public class GameMaster: MonoBehaviour
             player.transform.position = targetPosFix;
             return targetPos;
         }
-        // else if (tiles[target.y, target.x].name == "Stair"){
-        //     player.transform.position = new Vector3(target.x, target.y, 0);
-        //     return target;
-        // }
+        else if (targetTile.name == "Stair"){
+            player.transform.position = targetPosFix;
+            return targetPos;
+        }
         else {
             return objectPos;
         }
