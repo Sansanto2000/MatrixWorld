@@ -52,12 +52,6 @@ public class GameMaster: MonoBehaviour
                 int adjustedX = x - bounds.xMin;
                 int adjustedY = y - bounds.yMin;
                 tiles[adjustedX, adjustedY] = tile;
-                // if (tile != null)
-                // {
-                //     Debug.Log($"{cellPosition}: {tile.name}");
-                // } else{
-                //     Debug.Log($"{cellPosition}: vacio");;
-                // }
             }
         }
     }
@@ -122,12 +116,6 @@ public class GameMaster: MonoBehaviour
         TileBase targetTile = worldTilemap.GetTile(targetCell);
         Vector3 targetPosFix = worldTilemap.GetCellCenterWorld(targetCell);
         
-        // if (objectTile != null)
-        // {
-        //     Debug.Log($"Target: {targetPosFix}: {objectTile.name}");
-        // } else{
-        //     Debug.Log($"Target: {targetPosFix}: vacio");;
-        // }
         Vector3Int objectCell = worldTilemap.WorldToCell(objectPos);
         TileBase objectTile = worldTilemap.GetTile(objectCell);
 
