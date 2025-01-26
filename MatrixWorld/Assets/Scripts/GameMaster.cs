@@ -13,6 +13,10 @@ public class GameMaster: MonoBehaviour
     [Tooltip("Tilemap del mundo.")]
     public Tilemap tilemap;
 
+    [Header("Camera")]
+    [Tooltip("Quiet")]
+    public bool cameraQuiet = false;
+
     private PieceDict pieceDict;
 
     private GameObject player;
@@ -73,6 +77,9 @@ public class GameMaster: MonoBehaviour
 
     void updateCamera()
     {
+        if(cameraQuiet){
+            return;
+        }
         Vector3  playerPos = player.transform.position;
         Transform  cameraTransform = Camera.main.transform;
         //Debug.Log(playerPos.x != cameraPos.x || playerPos.y != cameraPos.y);
