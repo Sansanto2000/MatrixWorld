@@ -135,7 +135,7 @@ public class GameMaster: MonoBehaviour
             cameraTransform.position = new Vector3(playerPos.x, playerPos.y, cameraTransform.position.z);
     }
 
-    Vector3 move(Vector3 objectPos, Vector3 targetPos)
+    (Vector3 newPosition, bool moved) move(Vector3 objectPos, Vector3 targetPos)
     {
         Vector3Int targetCell = worldTilemap.WorldToCell(targetPos);
         TileBase targetTile = worldTilemap.GetTile(targetCell);
@@ -145,24 +145,24 @@ public class GameMaster: MonoBehaviour
         TileBase objectTile = worldTilemap.GetTile(objectCell);
 
         if(targetTile == null) {
-            return objectPos;
+            return (objectPos, false);
         }
         else 
         if(targetTile.name == "Floor") {
             player.transform.position = targetPosFix;
-            return targetPos;
+            return (targetPos, true);
         } 
         else if (targetTile.name == "Wall"
             && (objectTile.name == "Wall" || objectTile.name == "Stair")){
             player.transform.position = targetPosFix;
-            return targetPos;
+            return (targetPos, true);
         }
         else if (targetTile.name == "Stair"){
             player.transform.position = targetPosFix;
-            return targetPos;
+            return (targetPos, true);
         }
         else {
-            return objectPos;
+            return (objectPos, false);
         }
         
     }
@@ -190,28 +190,30 @@ public class GameMaster: MonoBehaviour
     void Update()
     {
         Vector3  playerPos = player.transform.position;
-
+        bool moved = false;
         if (Input.GetKeyDown(KeyCode.W)) 
         {
             Vector3 targetPos = new Vector3(playerPos.x, playerPos.y+1, 0);
-            playerPos = move(playerPos, targetPos);
+            (playerPos, moved) = move(playerPos, targetPos);
         }
         else if (Input.GetKeyDown(KeyCode.S)) 
         {
             Vector3 targetPos = new Vector3(playerPos.x, playerPos.y-1, 0);
-            playerPos = move(playerPos, targetPos);
+            (playerPos, moved) = move(playerPos, targetPos);
         }
         else if (Input.GetKeyDown(KeyCode.D)) 
         {
             Vector3 targetPos = new Vector3(playerPos.x+1, playerPos.y, 0);
-            playerPos = move(playerPos, targetPos);
+            (playerPos, moved) = move(playerPos, targetPos);
         }
         else if (Input.GetKeyDown(KeyCode.A)) 
         {
             Vector3 targetPos = new Vector3(playerPos.x-1, playerPos.y, 0);
-            playerPos = move(playerPos, targetPos);
+            (playerPos, moved) = move(playerPos, targetPos);
         }
-        checkLogic(playerPos);
+        if (moved){
+            checkLogic(playerPos);
+        }
         updateCamera();
     }
 }
