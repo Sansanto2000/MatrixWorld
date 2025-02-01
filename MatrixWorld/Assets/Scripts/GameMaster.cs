@@ -13,7 +13,7 @@ public class GameMaster: MonoBehaviour
     [Tooltip("Tilemap del mundo.")]
     public Tilemap worldTilemap;
 
-    [Tooltip("Tilemap del entaidades.")]
+    [Tooltip("Tilemap del entidades.")]
     public Tilemap entityTilemap;
 
     [Tooltip("Tilemap de elementos lógicos.")]
