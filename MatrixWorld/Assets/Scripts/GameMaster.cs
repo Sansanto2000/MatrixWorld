@@ -13,8 +13,11 @@ public class GameMaster: MonoBehaviour
     [Tooltip("Tilemap del mundo.")]
     public Tilemap worldTilemap;
 
-    [Tooltip("Tilemap del entaidades.")]
+    [Tooltip("Tilemap del entidades.")]
     public Tilemap entityTilemap;
+
+    [Tooltip("Tilemap de elementos lógicos.")]
+    public Tilemap logicTilemap;
 
     [Header("Camera")]
     [Tooltip("Quiet")]
@@ -110,7 +113,7 @@ public class GameMaster: MonoBehaviour
             cameraTransform.position = new Vector3(playerPos.x, playerPos.y, cameraTransform.position.z);
     }
 
-    Vector3 move(Vector3 objectPos, Vector3 targetPos)
+    (Vector3 newPosition, bool moved) move(Vector3 objectPos, Vector3 targetPos)
     {
         Vector3Int targetCell = worldTilemap.WorldToCell(targetPos);
         TileBase targetTile = worldTilemap.GetTile(targetCell);
@@ -120,55 +123,76 @@ public class GameMaster: MonoBehaviour
         TileBase objectTile = worldTilemap.GetTile(objectCell);
 
         if(targetTile == null) {
-            return objectPos;
+            return (objectPos, false);
         }
         else 
         if(targetTile.name == "Floor") {
             player.transform.position = targetPosFix;
-            return targetPos;
+            return (targetPos, true);
         } 
         else if (targetTile.name == "Wall"
             && (objectTile.name == "Wall" || objectTile.name == "Stair")){
             player.transform.position = targetPosFix;
-            return targetPos;
+            return (targetPos, true);
         }
         else if (targetTile.name == "Stair"){
             player.transform.position = targetPosFix;
-            return targetPos;
+            return (targetPos, true);
         }
         else {
-            return objectPos;
+            return (objectPos, false);
         }
         
+    }
+
+    void checkLogic(Vector3 objectPos){
+        Vector3Int objectCell = logicTilemap.WorldToCell(objectPos);
+        TileBase objectTile = logicTilemap.GetTile(objectCell);
+
+        if(objectTile == null) {
+            return;
+        }
+        else 
+        if(objectTile.name == "Checkpoint") {
+            Debug.Log("Checkpoint alcanzado");
+            return;
+        } 
+        else {
+            return;
+        }
     }
 
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.a
     /// </summary>
-    void Update()
-    {
-        Vector3  playerPos = player.transform.position;
+        void Update()
+        {
+            Vector3  playerPos = player.transform.position;
+            Vector3 targetPos = playerPos;
 
-        if (Input.GetKeyDown(KeyCode.W)) 
-        {
-            Vector3 targetPos = new Vector3(playerPos.x, playerPos.y+1, 0);
-            playerPos = move(playerPos, targetPos);
+            switch(true){
+                case var _ when Input.GetKeyDown(KeyCode.W):
+                    targetPos.y += 1;
+                    break;
+                case var _ when Input.GetKeyDown(KeyCode.S):
+                    targetPos.y -= 1;
+                    break;
+                case var _ when Input.GetKeyDown(KeyCode.D):
+                    targetPos.x += 1;
+                    break;
+                case var _ when Input.GetKeyDown(KeyCode.A):
+                    targetPos.x -= 1;
+                    break;
+            }
+
+            bool moved = false;
+            if(targetPos != playerPos){
+                (playerPos, moved) = move(playerPos, targetPos);
+            }
+            
+            if (moved){
+                checkLogic(playerPos);
+            }
+            updateCamera();
         }
-        else if (Input.GetKeyDown(KeyCode.S)) 
-        {
-            Vector3 targetPos = new Vector3(playerPos.x, playerPos.y-1, 0);
-            playerPos = move(playerPos, targetPos);
-        }
-        else if (Input.GetKeyDown(KeyCode.D)) 
-        {
-            Vector3 targetPos = new Vector3(playerPos.x+1, playerPos.y, 0);
-            playerPos = move(playerPos, targetPos);
-        }
-        else if (Input.GetKeyDown(KeyCode.A)) 
-        {
-            Vector3 targetPos = new Vector3(playerPos.x-1, playerPos.y, 0);
-            playerPos = move(playerPos, targetPos);
-        }
-        updateCamera();
-    }
 }
