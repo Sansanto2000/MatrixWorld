@@ -29,8 +29,6 @@ public class GameMaster: MonoBehaviour
 
     private TileBase[,] tiles;
 
-    private TileBase[,] logicTiles;
-
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
@@ -93,26 +91,6 @@ public class GameMaster: MonoBehaviour
         }
         
         Debug.LogWarning("Jugador no encontrado en el Tilemap.");
-    }
-
-    void GetLogicTiles()
-    {
-        BoundsInt bounds = logicTilemap.cellBounds;
-        int width = bounds.xMax - bounds.xMin;
-        int height = bounds.yMax - bounds.yMin;
-        logicTiles = new TileBase[width, height];
-
-        for (int x = bounds.xMin; x < bounds.xMax; x++)
-        {
-            for (int y = bounds.yMin; y < bounds.yMax; y++)
-            {
-                Vector3Int cellPosition = new Vector3Int(x, y, 0);
-                TileBase tile = worldTilemap.GetTile(cellPosition);
-                int adjustedX = x - bounds.xMin;
-                int adjustedY = y - bounds.yMin;
-                logicTiles[adjustedX, adjustedY] = tile;
-            }
-        }
     }
     
     /// <summary>
