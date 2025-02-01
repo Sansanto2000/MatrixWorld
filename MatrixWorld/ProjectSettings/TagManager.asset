@@ -44,6 +44,9 @@ TagManager:
   - name: World
     uniqueID: 4058138389
     locked: 0
+  - name: LogicVisuals
+    uniqueID: 2013749803
+    locked: 0
   - name: Entity
     uniqueID: 433258337
     locked: 0

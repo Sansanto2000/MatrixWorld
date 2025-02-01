@@ -16,6 +16,9 @@ public class GameMaster: MonoBehaviour
     [Tooltip("Tilemap del entaidades.")]
     public Tilemap entityTilemap;
 
+    [Tooltip("Tilemap de elementos lógicos.")]
+    public Tilemap logicTilemap;
+
     [Header("Camera")]
     [Tooltip("Quiet")]
     public bool cameraQuiet = false;
