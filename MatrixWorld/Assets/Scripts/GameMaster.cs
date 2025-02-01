@@ -29,6 +29,8 @@ public class GameMaster: MonoBehaviour
 
     private TileBase[,] tiles;
 
+    private TileBase[,] logicTiles;
+
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
@@ -92,6 +94,26 @@ public class GameMaster: MonoBehaviour
         
         Debug.LogWarning("Jugador no encontrado en el Tilemap.");
     }
+
+    void GetLogicTiles()
+    {
+        BoundsInt bounds = logicTilemap.cellBounds;
+        int width = bounds.xMax - bounds.xMin;
+        int height = bounds.yMax - bounds.yMin;
+        logicTiles = new TileBase[width, height];
+
+        for (int x = bounds.xMin; x < bounds.xMax; x++)
+        {
+            for (int y = bounds.yMin; y < bounds.yMax; y++)
+            {
+                Vector3Int cellPosition = new Vector3Int(x, y, 0);
+                TileBase tile = worldTilemap.GetTile(cellPosition);
+                int adjustedX = x - bounds.xMin;
+                int adjustedY = y - bounds.yMin;
+                logicTiles[adjustedX, adjustedY] = tile;
+            }
+        }
+    }
     
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -145,6 +167,23 @@ public class GameMaster: MonoBehaviour
         
     }
 
+    void checkLogic(Vector3 objectPos){
+        Vector3Int objectCell = logicTilemap.WorldToCell(objectPos);
+        TileBase objectTile = logicTilemap.GetTile(objectCell);
+
+        if(objectTile == null) {
+            return;
+        }
+        else 
+        if(objectTile.name == "Checkpoint") {
+            Debug.Log("Checkpoint alcanzado");
+            return;
+        } 
+        else {
+            return;
+        }
+    }
+
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.a
     /// </summary>
@@ -172,6 +211,7 @@ public class GameMaster: MonoBehaviour
             Vector3 targetPos = new Vector3(playerPos.x-1, playerPos.y, 0);
             playerPos = move(playerPos, targetPos);
         }
+        checkLogic(playerPos);
         updateCamera();
     }
 }

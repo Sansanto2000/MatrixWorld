@@ -2809,7 +2809,7 @@ Tilemap:
   m_GameObject: {fileID: 1298633698}
   m_Enabled: 1
   m_Tiles:
-  - first: {x: 2, y: 13, z: 0}
+  - first: {x: 1, y: 13, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 0
@@ -2822,7 +2822,7 @@ Tilemap:
   m_AnimatedTiles: {}
   m_TileAssetArray:
   - m_RefCount: 1
-    m_Data: {fileID: 11400000, guid: 994c307e263c63847b59a4ada9296962, type: 2}
+    m_Data: {fileID: 11400000, guid: a22c65e0a7401a742a6797b18760eae5, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 1
     m_Data: {fileID: 4099902767569298868, guid: f610ab78dd3db084abf3a24d703d6d4a, type: 3}
