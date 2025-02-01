@@ -187,33 +187,34 @@ public class GameMaster: MonoBehaviour
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.a
     /// </summary>
-    void Update()
-    {
-        Vector3  playerPos = player.transform.position;
-        bool moved = false;
-        if (Input.GetKeyDown(KeyCode.W)) 
+        void Update()
         {
-            Vector3 targetPos = new Vector3(playerPos.x, playerPos.y+1, 0);
-            (playerPos, moved) = move(playerPos, targetPos);
+            Vector3  playerPos = player.transform.position;
+            Vector3 targetPos = playerPos;
+
+            switch(true){
+                case var _ when Input.GetKeyDown(KeyCode.W):
+                    targetPos.y += 1;
+                    break;
+                case var _ when Input.GetKeyDown(KeyCode.S):
+                    targetPos.y -= 1;
+                    break;
+                case var _ when Input.GetKeyDown(KeyCode.D):
+                    targetPos.x += 1;
+                    break;
+                case var _ when Input.GetKeyDown(KeyCode.A):
+                    targetPos.x -= 1;
+                    break;
+            }
+
+            bool moved = false;
+            if(targetPos != playerPos){
+                (playerPos, moved) = move(playerPos, targetPos);
+            }
+            
+            if (moved){
+                checkLogic(playerPos);
+            }
+            updateCamera();
         }
-        else if (Input.GetKeyDown(KeyCode.S)) 
-        {
-            Vector3 targetPos = new Vector3(playerPos.x, playerPos.y-1, 0);
-            (playerPos, moved) = move(playerPos, targetPos);
-        }
-        else if (Input.GetKeyDown(KeyCode.D)) 
-        {
-            Vector3 targetPos = new Vector3(playerPos.x+1, playerPos.y, 0);
-            (playerPos, moved) = move(playerPos, targetPos);
-        }
-        else if (Input.GetKeyDown(KeyCode.A)) 
-        {
-            Vector3 targetPos = new Vector3(playerPos.x-1, playerPos.y, 0);
-            (playerPos, moved) = move(playerPos, targetPos);
-        }
-        if (moved){
-            checkLogic(playerPos);
-        }
-        updateCamera();
-    }
 }
