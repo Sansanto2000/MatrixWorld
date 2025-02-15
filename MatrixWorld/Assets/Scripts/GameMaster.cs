@@ -5,9 +5,11 @@ using System.Collections.Generic;
 public class GameMaster: MonoBehaviour
 {
     [Header("Configuración de celdas")]
-
     [Tooltip("Celda que representa al jugador.")]
     public GameObject playerTile;
+
+    [Tooltip("Celda que representa al enemigo, maniqui golpeable.")]
+    public GameObject hittableDummy;
 
     [Header("Tilemaps")]
     [Tooltip("Tilemap del mundo.")]
@@ -26,6 +28,7 @@ public class GameMaster: MonoBehaviour
     private PieceDict pieceDict;
 
     private GameObject player;
+    private List<GameObject> enemies = new List<GameObject>();
 
     private TileBase[,] tiles;
 
@@ -69,7 +72,10 @@ public class GameMaster: MonoBehaviour
             {
                 Vector3Int cellPosition = new Vector3Int(x, y, 0);
                 TileBase tileBase = entityTilemap.GetTile(cellPosition);
-                if (tileBase != null && tileBase.name == "Player") 
+                if (tileBase == null){
+                    continue;
+                }
+                else if (tileBase.name == "Player") 
                 {
                     if (tileBase is Tile tile)
                     {
@@ -84,13 +90,29 @@ public class GameMaster: MonoBehaviour
                         player = obj;
 
                         entityTilemap.SetTile(cellPosition, null);
-                        return;   
+                    }
+                }
+                else if (tileBase.name == "HittableDummy") {
+                    if (tileBase is Tile tile)
+                    {
+                        Vector3 originPosFix = entityTilemap.GetCellCenterWorld(cellPosition);
+
+                        GameObject obj = Instantiate(hittableDummy, originPosFix, Quaternion.identity);
+
+                        SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+                        spriteRenderer.sortingLayerName = entityTilemap.GetComponent<TilemapRenderer>().sortingLayerName;
+                
+                        enemies.Add(obj);
+
+                        entityTilemap.SetTile(cellPosition, null);
                     }
                 }
             }
         }
         
-        Debug.LogWarning("Jugador no encontrado en el Tilemap.");
+        if(player == null){
+            Debug.LogWarning("Jugador no encontrado en el Tilemap.");
+        }
     }
     
     /// <summary>

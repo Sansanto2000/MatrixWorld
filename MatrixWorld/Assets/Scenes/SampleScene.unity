@@ -453,6 +453,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTile: {fileID: 6718530097768167596, guid: 620712f3ca28c344ab53ceab5ecc8664, type: 3}
+  hittableDummy: {fileID: 6718530097768167596, guid: cbf9088f0537f1c4d833b00b5bb231f7, type: 3}
   worldTilemap: {fileID: 887005780}
   entityTilemap: {fileID: 411957141}
   logicTilemap: {fileID: 1298633701}
