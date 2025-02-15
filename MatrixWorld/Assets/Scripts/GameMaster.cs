@@ -135,8 +135,22 @@ public class GameMaster: MonoBehaviour
             cameraTransform.position = new Vector3(playerPos.x, playerPos.y, cameraTransform.position.z);
     }
 
+    GameObject checkEnemiesPrecense(Vector3 position) {
+        for (int i = 0; i < enemies.Count; i++) {
+            if (enemies[i].transform.position == position) {
+                return enemies[i];
+            }
+        }
+        return null;
+    }
+
     (Vector3 newPosition, bool moved) move(Vector3 objectPos, Vector3 targetPos)
     {
+        GameObject enemyFound = checkEnemiesPrecense(targetPos);
+        if (enemyFound != null){
+            return (objectPos, false);
+        }
+
         Vector3Int targetCell = worldTilemap.WorldToCell(targetPos);
         TileBase targetTile = worldTilemap.GetTile(targetCell);
         Vector3 targetPosFix = worldTilemap.GetCellCenterWorld(targetCell);
