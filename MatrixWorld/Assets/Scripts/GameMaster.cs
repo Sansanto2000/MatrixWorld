@@ -149,9 +149,16 @@ public class GameMaster: MonoBehaviour
 
     (Vector3 newPosition, bool moved) move(Vector3 objectPos, Vector3 targetPos)
     {
-        GameObject enemyFound = checkEnemiesPrecense(targetPos);
-        if (enemyFound != null){
-            StartCoroutine(cameraShake.Shake());
+        GameObject enemyFounded = checkEnemiesPrecense(targetPos);
+        if (enemyFounded != null){
+            Hittable enemyHittable = enemyFounded.GetComponent<Hittable>();
+            if (enemyHittable == null) {
+                Debug.Log("El enemigo no es golpeable");
+            } 
+            else {
+                enemyHittable.Hit();
+                StartCoroutine(cameraShake.Shake());
+            }
             return (objectPos, false);
         }
 
