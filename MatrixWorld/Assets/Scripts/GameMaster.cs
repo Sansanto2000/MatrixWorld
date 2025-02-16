@@ -22,6 +22,9 @@ public class GameMaster: MonoBehaviour
     public Tilemap logicTilemap;
 
     [Header("Camera")]
+    [Tooltip("Shake script")]
+    public CameraShake cameraShake;
+
     [Tooltip("Quiet")]
     public bool cameraQuiet = false;
 
@@ -148,6 +151,7 @@ public class GameMaster: MonoBehaviour
     {
         GameObject enemyFound = checkEnemiesPrecense(targetPos);
         if (enemyFound != null){
+            StartCoroutine(cameraShake.Shake());
             return (objectPos, false);
         }
 
