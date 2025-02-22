@@ -147,7 +147,7 @@ public class GameMaster: MonoBehaviour
         return null;
     }
 
-    void hit(GameObject enemy) {
+    void hit(GameObject enemyFounded) {
         Hittable enemyHittable = enemyFounded.GetComponent<Hittable>();
         if (enemyHittable == null) {
             Debug.Log("El enemigo no es golpeable");
