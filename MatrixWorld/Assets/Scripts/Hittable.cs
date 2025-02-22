@@ -4,16 +4,17 @@ public class Hittable : MonoBehaviour
 {
 
     private AudioSource audioSource;
+    private ParticleSystem hitEffect;
 
-    void Start()
+    void Awake()
     {
-        if (audioSource == null) {
-            audioSource = GetComponent<AudioSource>();
-        }
+        audioSource = GetComponent<AudioSource>();
+        hitEffect = GetComponent<ParticleSystem>();
     }
 
     public void Hit()
     {
-        audioSource.Play(); // Play sound without interrupting others
+        audioSource.Play();
+        hitEffect.Play();
     }
 }
