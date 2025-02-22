@@ -147,18 +147,21 @@ public class GameMaster: MonoBehaviour
         return null;
     }
 
+    void hit(GameObject enemy) {
+        Hittable enemyHittable = enemyFounded.GetComponent<Hittable>();
+        if (enemyHittable == null) {
+            Debug.Log("El enemigo no es golpeable");
+            return;
+        } 
+        enemyHittable.Hit();
+        StartCoroutine(cameraShake.Shake());
+    }
+
     (Vector3 newPosition, bool moved) move(Vector3 objectPos, Vector3 targetPos)
     {
         GameObject enemyFounded = checkEnemiesPrecense(targetPos);
         if (enemyFounded != null){
-            Hittable enemyHittable = enemyFounded.GetComponent<Hittable>();
-            if (enemyHittable == null) {
-                Debug.Log("El enemigo no es golpeable");
-            } 
-            else {
-                enemyHittable.Hit();
-                StartCoroutine(cameraShake.Shake());
-            }
+            hit(enemyFounded);
             return (objectPos, false);
         }
 
