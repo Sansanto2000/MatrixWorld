@@ -147,13 +147,17 @@ public class GameMaster: MonoBehaviour
         return null;
     }
 
+    public void EnemyDeleted(GameObject enemy) {
+        enemies.Remove(enemy);
+    }
+
     void hit(GameObject enemyFounded) {
         Hittable enemyHittable = enemyFounded.GetComponent<Hittable>();
         if (enemyHittable == null) {
             Debug.Log("El enemigo no es golpeable");
             return;
         } 
-        enemyHittable.Hit(player.transform.position);
+        enemyHittable.Hit(10, player.transform.position);
         StartCoroutine(cameraShake.Shake());
     }
 
