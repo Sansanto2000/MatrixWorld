@@ -153,7 +153,7 @@ public class GameMaster: MonoBehaviour
             Debug.Log("El enemigo no es golpeable");
             return;
         } 
-        enemyHittable.Hit();
+        enemyHittable.Hit(player.transform.position);
         StartCoroutine(cameraShake.Shake());
     }
 
