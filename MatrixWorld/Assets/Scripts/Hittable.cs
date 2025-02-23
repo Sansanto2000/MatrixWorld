@@ -22,11 +22,37 @@ public class Hittable : MonoBehaviour
         /// <summary>
         /// Emite partículas en la dirección opuesta del que realiza el golpe
         /// </summary>
+
         float diffx = hitterPosition.x - hitEffect.transform.position.x;
         float diffy = hitterPosition.y - hitEffect.transform.position.y;
-        float angle = Mathf.Atan2(diffy, diffx) * Mathf.Rad2Deg;
-        float fixAngle = angle + 90;
-        hitEffect.transform.rotation = Quaternion.Euler(0f, 0f, fixAngle);
+        float angle = 0;
+        var mainModule = hitEffect.main;
+        float particleRotation = 0;
+        switch (diffx, diffy) {
+            case (>0,_):
+                angle = -270;
+                particleRotation = 270;
+                Debug.Log(angle);
+                break;
+            case (<0,_): 
+                angle = -90;
+                particleRotation = 90;
+                Debug.Log(angle);
+                break;
+            case (_,>0):
+                angle = 180;
+                particleRotation = 180;
+                Debug.Log(angle);
+                break;
+            case (_,<0):
+                angle = 0;
+                particleRotation = 0;
+                Debug.Log(angle);
+                break;  
+        }
+
+        mainModule.startRotation = particleRotation;
+        hitEffect.transform.rotation = Quaternion.Euler(0f, 0f, angle);
         hitEffect.Play();
     }
 
