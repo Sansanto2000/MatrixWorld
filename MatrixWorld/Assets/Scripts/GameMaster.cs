@@ -5,9 +5,11 @@ using System.Collections.Generic;
 public class GameMaster: MonoBehaviour
 {
     [Header("Configuración de celdas")]
-
     [Tooltip("Celda que representa al jugador.")]
     public GameObject playerTile;
+
+    [Tooltip("Celda que representa al enemigo, maniqui golpeable.")]
+    public GameObject hittableDummy;
 
     [Header("Tilemaps")]
     [Tooltip("Tilemap del mundo.")]
@@ -20,12 +22,16 @@ public class GameMaster: MonoBehaviour
     public Tilemap logicTilemap;
 
     [Header("Camera")]
+    [Tooltip("Shake script")]
+    public CameraShake cameraShake;
+
     [Tooltip("Quiet")]
     public bool cameraQuiet = false;
 
     private PieceDict pieceDict;
 
     private GameObject player;
+    private List<GameObject> enemies = new List<GameObject>();
 
     private TileBase[,] tiles;
 
@@ -69,7 +75,10 @@ public class GameMaster: MonoBehaviour
             {
                 Vector3Int cellPosition = new Vector3Int(x, y, 0);
                 TileBase tileBase = entityTilemap.GetTile(cellPosition);
-                if (tileBase != null && tileBase.name == "Player") 
+                if (tileBase == null){
+                    continue;
+                }
+                else if (tileBase.name == "Player") 
                 {
                     if (tileBase is Tile tile)
                     {
@@ -84,13 +93,29 @@ public class GameMaster: MonoBehaviour
                         player = obj;
 
                         entityTilemap.SetTile(cellPosition, null);
-                        return;   
+                    }
+                }
+                else if (tileBase.name == "HittableDummy") {
+                    if (tileBase is Tile tile)
+                    {
+                        Vector3 originPosFix = entityTilemap.GetCellCenterWorld(cellPosition);
+
+                        GameObject obj = Instantiate(hittableDummy, originPosFix, Quaternion.identity);
+
+                        SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+                        spriteRenderer.sortingLayerName = entityTilemap.GetComponent<TilemapRenderer>().sortingLayerName;
+                
+                        enemies.Add(obj);
+
+                        entityTilemap.SetTile(cellPosition, null);
                     }
                 }
             }
         }
         
-        Debug.LogWarning("Jugador no encontrado en el Tilemap.");
+        if(player == null){
+            Debug.LogWarning("Jugador no encontrado en el Tilemap.");
+        }
     }
     
     /// <summary>
@@ -113,8 +138,37 @@ public class GameMaster: MonoBehaviour
             cameraTransform.position = new Vector3(playerPos.x, playerPos.y, cameraTransform.position.z);
     }
 
+    GameObject checkEnemiesPrecense(Vector3 position) {
+        for (int i = 0; i < enemies.Count; i++) {
+            if (enemies[i].transform.position == position) {
+                return enemies[i];
+            }
+        }
+        return null;
+    }
+
+    public void EnemyDeleted(GameObject enemy) {
+        enemies.Remove(enemy);
+    }
+
+    void hit(GameObject enemyFounded) {
+        Hittable enemyHittable = enemyFounded.GetComponent<Hittable>();
+        if (enemyHittable == null) {
+            Debug.Log("El enemigo no es golpeable");
+            return;
+        } 
+        enemyHittable.Hit(10, player.transform.position);
+        StartCoroutine(cameraShake.Shake());
+    }
+
     (Vector3 newPosition, bool moved) move(Vector3 objectPos, Vector3 targetPos)
     {
+        GameObject enemyFounded = checkEnemiesPrecense(targetPos);
+        if (enemyFounded != null){
+            hit(enemyFounded);
+            return (objectPos, false);
+        }
+
         Vector3Int targetCell = worldTilemap.WorldToCell(targetPos);
         TileBase targetTile = worldTilemap.GetTile(targetCell);
         Vector3 targetPosFix = worldTilemap.GetCellCenterWorld(targetCell);
